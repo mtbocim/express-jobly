@@ -56,6 +56,7 @@ describe("ensureLoggedIn", function () {
   test("unauth if no login", function () {
     const req = {};
     const res = { locals: {} };
+    //too much next?
     expect(() => ensureLoggedIn(req, res, next, next)).toThrowError();
   });
 });
