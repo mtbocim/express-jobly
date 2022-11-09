@@ -1,6 +1,5 @@
 const { BadRequestError } = require("../expressError");
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
 /** Function for generating a database query with dynamic keys.
  * Takes in two objects, one object with the data to update and another
  * for the javascript to SQL name translation.
@@ -25,10 +24,28 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   };
 }
 
-/**
- * 
+/** Function for generating a WHERE clause for database query.
+ *  Accepts 1-3 valid search terms:
+ *   minEmployees : type(int), maxEmployees : type(int), name : type(string)
+ *
+ * - Accepts: Object like:
+ *      {name : Apple, "minEmployees" : 5, maxEmployees : 10}
+ * - Returns: Object like:
+ *      {'name ILIKE %Apple% AND num_employees > 5 AND num_employees < 10'}
  */
-function sqlForFilteredSearch(dataToFilter, jsToSql){
+function sqlForFilteredSearch(dataToFilter) {
+  const dataKeys = Object.keys(dataToFilter);
+  if (dataKeys.length === 0) throw new BadRequestError("No Data");
+
+  const search = [];
+
+  if (dataToFilter.name) search.push(`name ILIKE %${dataToFilter.name}%`);
+  if (dataToFilter.minEmployees) search.push(`num_employees > ${dataToFilter.minEmployees}`);
+  if (dataToFilter.maxEmployees) search.push(`num_employees < ${dataToFilter.maxEmployees}`);
+
+  if (search.length === 0) throw new BadRequestError("No Data");
+
+  return search.join(' AND ');
 
 }
-module.exports = { sqlForPartialUpdate,sqlForFilteredSearch };
+module.exports = { sqlForPartialUpdate, sqlForFilteredSearch };
