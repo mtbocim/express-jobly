@@ -25,4 +25,10 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   };
 }
 
-module.exports = { sqlForPartialUpdate };
+/**
+ * 
+ */
+function sqlForFilteredSearch(dataToFilter, jsToSql){
+
+}
+module.exports = { sqlForPartialUpdate,sqlForFilteredSearch };
