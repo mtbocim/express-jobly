@@ -90,58 +90,47 @@ describe("sqlForPartialUpdate", function () {
 describe("tests for sqlFilteredSearch", function () {
   test("work: with single valid inputs", function () {
     const data = { minEmployees: 5 };
-    const jsToSql = { minEmployees: "min_employees" };
+    //const jsToSql = { minEmployees: "min_employees" };
 
-    const queryData = sqlForFilteredSearch(data, jsToSql);
-    expect(queryData).toEqual({ setCols: '"min_employees"=$1', values: [5] });
+    const queryData = sqlForFilteredSearch(data);
+    expect(queryData).toEqual('num_employees >= 5');
   });
 
-  test("work: multiple valid inputs", function () {
+  test("work: two valid inputs", function () {
     const data = { minEmployees: 5, name: "bob" };
-    const jsToSql = { minEmployees: "min_employees", name: "name" };
 
-    const queryData = sqlForFilteredSearch(data, jsToSql);
+    const queryData = sqlForFilteredSearch(data);
     expect(queryData).toEqual(
-      {
-        setCols: '"min_employees"=$1,"name"=$2',
-        values: [5, "bob"]
-      }
+      `name ILIKE '%bob%' AND num_employees >= 5`
     );
   });
 
-  test("work: defaults to data col?? name if not matched in jsToSql", function () {
-    const data = { minEmployees: 5, name: "bob" };
-    const jsToSql = { maxEmployees: "max_employees" };
+  test("work: three valid inputs", function () {
+    const data = { minEmployees: 5, maxEmployees: 10, name: "bob" };
 
-    const queryData = sqlForFilteredSearch(data, jsToSql);
+    const queryData = sqlForFilteredSearch(data);
     expect(queryData).toEqual(
-      {
-        setCols: '"minEmployees"=$1,"name"=$2',
-        values: [5, "bob"]
-      }
+      `name ILIKE '%bob%' AND num_employees >= 5 AND num_employees <= 10`
     );
   });
 
-  test("work: no keys provided for jsToSql", function () {
-    const data = { name: "Michael" };
-    const jsToSql = {};
-
-    const queryData = sqlForFilteredSearch(data, jsToSql);
-    expect(queryData).toEqual(
-      {
-        setCols: '"name"=$1',
-        values: ['Michael']
-      }
-    );
-
-  });
-
-  test("does not work: no keys provided for dataToFilter???", function () {
+  test("does not work: no keys provided for dataToFilter", function () {
     const data = {};
-    const jsToSql = { name: "name" };
 
     try {
-      const queryData = sqlForFilteredSearch(data, jsToSql);
+      const queryData = sqlForFilteredSearch(data);
+      throw new Error("shouldn't ever get here");
+    }
+    catch (errs) {
+      expect(errs instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+  test("does not work: incorrects keys provided for dataToFilter", function () {
+    const data = { monkey: "silly" };
+
+    try {
+      const queryData = sqlForFilteredSearch(data);
       throw new Error("shouldn't ever get here");
     }
     catch (errs) {
@@ -150,21 +139,15 @@ describe("tests for sqlFilteredSearch", function () {
   });
 
 
-  test("work: no values provided to keys for dataToFilter???", function () {
+  test("work: no values provided to keys for dataToFilter", function () {
     const data = { name: "" };
-    const jsToSql = { name: "name" };
 
-    const queryData = sqlForFilteredSearch(data, jsToSql);
-    expect(queryData).toEqual({ setCols: '"name"=$1', values: [''] });
-
-  });
-
-  test("work: no values provided to keys for jsToSql", function () {
-    const data = { name: "Michael" };
-    const jsToSql = { name: '' };
-
-    const queryData = sqlForPartialUpdate(data, jsToSql);
-    expect(queryData).toEqual({ setCols: '"name"=$1', values: ['Michael'] });
-
+    try {
+      const queryData = sqlForFilteredSearch(data);
+      throw new Error("shouldn't ever get here");
+    }
+    catch (errs) {
+      expect(errs instanceof BadRequestError).toBeTruthy();
+    }
   });
 });

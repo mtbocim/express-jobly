@@ -35,15 +35,17 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  */
 function sqlForFilteredSearch(dataToFilter) {
   const dataKeys = Object.keys(dataToFilter);
-  if (dataKeys.length === 0) throw new BadRequestError("No Data");
+  if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
 
   const search = [];
 
-  if (dataToFilter.name) search.push(`name ILIKE %${dataToFilter.name}%`);
-  if (dataToFilter.minEmployees) search.push(`num_employees > ${dataToFilter.minEmployees}`);
-  if (dataToFilter.maxEmployees) search.push(`num_employees < ${dataToFilter.maxEmployees}`);
+  if (dataToFilter.name) search.push(`name ILIKE '%${dataToFilter.name}%'`);
+  if (dataToFilter.minEmployees) search.push(`num_employees >= ${dataToFilter.minEmployees}`);
+  if (dataToFilter.maxEmployees) search.push(`num_employees <= ${dataToFilter.maxEmployees}`);
 
-  if (search.length === 0) throw new BadRequestError("No Data");
+  if (search.length === 0) {
+    throw new BadRequestError("Insufficient search parameters");
+  }
 
   return search.join(' AND ');
 
