@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>25/25</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/14</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>23/23</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
@@ -130,8 +130,16 @@
 <a name='L65'></a><a href='#L65'>65</a>
 <a name='L66'></a><a href='#L66'>66</a>
 <a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -167,38 +175,45 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { BadRequestError } = require("../expressError");
-&nbsp;
+const jsonschema = require("jsonschema");
+const companyFilterSchema = require("../schemas/companyFilterSearch.json");
 /** Function for generating a database query with dynamic keys.
  * Takes in two objects, one object with the data to update and another
  * for the javascript to SQL name translation.
@@ -230,40 +245,46 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  * - Accepts: Object like:
  *      {name : Apple, "minEmployees" : 5, maxEmployees : 10}
  * - Returns: Object like:
- *      {'name ILIKE %Apple% AND num_employees &gt; 5 AND num_employees &lt; 10'}
- *   // TODO: name ILIKE $1 AND num_employees &gt; $2 AND num_employees &lt; $3
+ *      {
+ *        'name ILIKE $1 AND num_employees &gt; $2 AND num_employees &lt; $3',
+ *        [%Apple%, 5, 10]
+ *      }
  */
-function sqlForFilteredSearch(dataToFilter) {
-  const dataKeys = Object.keys(dataToFilter);
-  if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
+// function sqlForFilteredSearch(dataToFilter) { //TODO:Move to model with _name
+//   const dataKeys = Object.keys(dataToFilter);
+//   if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
 &nbsp;
-  const values = [];
-  const where = [];
+//   const validator = jsonschema.validate(
+//     dataToFilter,
+//     companyFilterSchema,
+//     { required: true }
+//   );
+//   if (!validator.valid) {
+//     const errs = validator.errors.map(e =&gt; e.stack);
+//     throw new BadRequestError(errs);
+//   }
 &nbsp;
-  if (dataToFilter.name) {
-    values.push(`%${dataToFilter.name}%`); // LITERAL VALUE
-    where.push(`name ILIKE $${values.length}`); // STRING CONSTRUCTOR
-  }
+//   const values = [];
+//   const where = [];
 &nbsp;
-  if (dataToFilter.minEmployees) {
-    values.push(`${dataToFilter.minEmployees}`);
-    where.push(`num_employees &gt;= $${values.length}`);
-  }
+//   if (dataToFilter.name !== undefined) { 
+//     values.push(`%${dataToFilter.name}%`);
+//     where.push(`name ILIKE $${values.length}`);
+//   }
 &nbsp;
-  if (dataToFilter.maxEmployees) {
-    values.push(`${dataToFilter.maxEmployees}`);
-    where.push(`num_employees &lt;= $${values.length}`);
-  };
+//   if (dataToFilter.minEmployees !== undefined) {
+//     values.push(`${dataToFilter.minEmployees}`);
+//     where.push(`num_employees &gt;= $${values.length}`);
+//   }
 &nbsp;
-  if (values.length === 0) {
-    throw new BadRequestError("Insufficient search parameters");
-  }
+//   if (dataToFilter.maxEmployees !== undefined) {
+//     values.push(`${dataToFilter.maxEmployees}`);
+//     where.push(`num_employees &lt;= $${values.length}`);
+//   };
 &nbsp;
-  return ({ where: where.join(' AND '), values });
-&nbsp;
-&nbsp;
-}
-module.exports = { sqlForPartialUpdate, sqlForFilteredSearch };
+//   return ({ where: where.join(' AND '), values });
+// }
+module.exports = { sqlForPartialUpdate };
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -271,7 +292,7 @@ module.exports = { sqlForPartialUpdate, sqlForFilteredSearch };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-11-10T02:29:19.960Z
+                at 2022-11-10T20:12:42.521Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

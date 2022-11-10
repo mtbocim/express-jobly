@@ -95,6 +95,7 @@ describe("GET /companies", function () {
         ],
     });
   });
+
   test("ok for anon: filtered", async function () {
     const resp = await request(app).get("/companies?name=C1");
     expect(resp.body).toEqual({
@@ -110,6 +111,62 @@ describe("GET /companies", function () {
         ],
     });
   });
+
+  test("ok for anon: filtered", async function () {
+    const resp = await request(app).get("/companies?minEmployees=1");
+    expect(resp.body).toEqual({
+      companies:
+        [
+          {
+            handle: "c1",
+            name: "C1",
+            description: "Desc1",
+            numEmployees: 1,
+            logoUrl: "http://c1.img",
+          },
+          {
+            handle: "c2",
+            name: "C2",
+            description: "Desc2",
+            numEmployees: 2,
+            logoUrl: "http://c2.img",
+          },
+          {
+            handle: "c3",
+            name: "C3",
+            description: "Desc3",
+            numEmployees: 3,
+            logoUrl: "http://c3.img",
+          },
+        ],
+    });
+  });
+
+  test("ok for anon: filtered", async function () {
+    const resp = await request(app)
+      .get("/companies?maxEmployees=1");
+    expect(resp.body).toEqual({
+      companies:
+        [
+          {
+            handle: "c1",
+            name: "C1",
+            description: "Desc1",
+            numEmployees: 1,
+            logoUrl: "http://c1.img",
+          },
+        ],
+    });
+  });
+
+  test("ok for anon: filtered", async function () {
+    const resp = await request(app)
+      .get("/companies?minEmployees=1000");
+    expect(resp.body).toEqual({ companies: [] });
+  });
+
+  //TODO:No results test
+
   test("not work: invalid query params on filtered search", async function () {
     const resp = await request(app).get("/companies?eith=C1");
     expect(resp.body).toEqual({
@@ -121,6 +178,7 @@ describe("GET /companies", function () {
       }
     });
   });
+
   test("fails: test next() handler", async function () {
     // there's no normal failure event which will cause this route to fail ---
     // thus making it hard to test that the error-handler works with it. This

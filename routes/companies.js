@@ -52,11 +52,20 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  const queryKeys = Object.keys(req.query);
-
+  const query = req.query;
+  if (query.minEmployees !== undefined) { 
+    query.minEmployees = +query.minEmployees;
+  }
+  if (query.maxEmployees !== undefined) {
+    query.maxEmployees = +query.maxEmployees;
+  }
+  
+  //TODO:make sure we have a test for types
+  
+  const queryKeys = Object.keys(query);
   if (queryKeys.length !== 0) {
     const validator = jsonschema.validate(
-      req.query,
+      query,
       companyFilterSchema,
       { required: true }
     );
@@ -64,8 +73,8 @@ router.get("/", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
-    const companies = await Company.findFiltered(req.query);
+    
+    const companies = await Company.findFiltered(query);
     return res.json({ companies });
   } else {
     const companies = await Company.findAll();

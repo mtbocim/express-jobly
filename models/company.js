@@ -2,7 +2,9 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate, sqlForFilteredSearch } = require("../helpers/sql");
+const { sqlForPartialUpdate } = require("../helpers/sql");
+const jsonschema = require("jsonschema");
+const companyFilterSchema = require("../schemas/companyFilterSearch.json");
 
 /** Related functions for companies. */
 
@@ -69,21 +71,25 @@ class Company {
   /**Find companies by filter
    *
    * Accepts an object container search values.
-   *
+   * Valid filter keywords:
+   *  -minEmployees
+   *  -maxEmployees
+   *  -name
+   * { name: 'name', minEmployees: 1, maxEmployees: 1000 }
+   * 
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    */
 
   static async findFiltered(queryParams) {
     const { minEmployees, maxEmployees } = queryParams;
 
-    if (minEmployees && maxEmployees
-      && minEmployees > maxEmployees) {
+    if (minEmployees > maxEmployees) {
       throw new BadRequestError("minEmployees must be less than maxEmployees.");
     }
 
-    const { where, values } = sqlForFilteredSearch(queryParams);
-    console.log(">>>>>>>WHERE", where);
-    console.log(">>>>>>>VALUES", values);
+    const { where, values } = Company._sqlForFilteredSearch(queryParams);
+    //console.log(">>>>>>>WHERE", where);
+    //console.log(">>>>>>>VALUES", values);
 
     const query =
       `SELECT
@@ -98,8 +104,6 @@ class Company {
         ORDER BY name` ;
 
     const companiesRes = await db.query(query, values);
-
-    if (companiesRes.rows.length === 0) throw new NotFoundError('No companies found');
 
     return companiesRes.rows;
   }
@@ -179,6 +183,54 @@ class Company {
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
+  }
+
+
+  /** Function for generating a WHERE clause for database query.
+ *  Accepts 1-3 valid search terms:
+ *   minEmployees : type(int), maxEmployees : type(int), name : type(string)
+ *
+ * - Accepts: Object like:
+ *      {name : Apple, "minEmployees" : 5, maxEmployees : 10}
+ * - Returns: Object like:
+ *      {
+ *        'name ILIKE $1 AND num_employees > $2 AND num_employees < $3',
+ *        [%Apple%, 5, 10]
+ *      }
+ */
+  static _sqlForFilteredSearch(dataToFilter) {
+    const dataKeys = Object.keys(dataToFilter);
+    if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
+
+    const validator = jsonschema.validate(
+      dataToFilter,
+      companyFilterSchema,
+      { required: true }
+    );
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const values = [];
+    const where = [];
+
+    if (dataToFilter.name !== undefined) {
+      values.push(`%${dataToFilter.name}%`);
+      where.push(`name ILIKE $${values.length}`);
+    }
+
+    if (dataToFilter.minEmployees !== undefined) {
+      values.push(`${dataToFilter.minEmployees}`);
+      where.push(`num_employees >= $${values.length}`);
+    }
+
+    if (dataToFilter.maxEmployees !== undefined) {
+      values.push(`${dataToFilter.maxEmployees}`);
+      where.push(`num_employees <= $${values.length}`);
+    };
+
+    return ({ where: where.join(' AND '), values });
   }
 }
 

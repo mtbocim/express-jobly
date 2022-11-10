@@ -42,6 +42,8 @@ describe("sqlForPartialUpdate", function () {
 
   });
 
+  //TODO:Show that a single word doesn't get translated
+
   test("work: no keys provided for jsToSql", function () {
     const data = { firstName: "Michael" };
     const jsToSql = {};
@@ -74,6 +76,7 @@ describe("sqlForPartialUpdate", function () {
 
   });
 
+  //TODO: Test that this *shouldn't* work!! Change function behaviour
   test("work: no values provided to keys for jsToSql", function () {
     const data = { firstName: "Michael" };
     const jsToSql = { firstName: '' };
@@ -86,78 +89,80 @@ describe("sqlForPartialUpdate", function () {
 });
 
 
-/************************************** sqlFilteredSearch */
-describe("tests for sqlFilteredSearch", function () {
-  test("work: with single valid inputs", function () {
-    const data = { minEmployees: 5 };
-    //const jsToSql = { minEmployees: "min_employees" };
+// /************************************** sqlFilteredSearch */
+// describe("tests for sqlFilteredSearch", function () {
+//   test("work: with single valid inputs", function () {
+//     const data = { minEmployees: 5 };
+//     //const jsToSql = { minEmployees: "min_employees" };
 
-    const queryData = sqlForFilteredSearch(data);
-    expect(queryData).toEqual({
-      "values": ["5"],
-      "where": "num_employees >= $1"
-    });
-  });
+//     const queryData = sqlForFilteredSearch(data);
+//     expect(queryData).toEqual({
+//       "values": ["5"],
+//       "where": "num_employees >= $1"
+//     });
+//   });
 
-  test("work: two valid inputs", function () {
-    const data = { minEmployees: 5, name: "bob" };
+//   test("work: two valid inputs", function () {
+//     const data = { minEmployees: 5, name: "bob" };
 
-    const queryData = sqlForFilteredSearch(data);
-    expect(queryData).toEqual(
-      {
-        "values": ["%bob%", "5"],
-        "where": "name ILIKE $1 AND num_employees >= $2"
-      }
+//     const queryData = sqlForFilteredSearch(data);
+//     expect(queryData).toEqual(
+//       {
+//         "values": ["%bob%", "5"],
+//         "where": "name ILIKE $1 AND num_employees >= $2"
+//       }
 
-    );
-  });
+//     );
+//   });
 
-  test("work: three valid inputs", function () {
-    const data = { minEmployees: 5, maxEmployees: 10, name: "bob" };
+//   test("work: three valid inputs", function () {
+//     const data = { minEmployees: 5, maxEmployees: 10, name: "bob" };
 
-    const queryData = sqlForFilteredSearch(data);
-    expect(queryData).toEqual(
-      {
-        "values": ["%bob%", "5", "10"],
-        "where": "name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3"
-      }
-    );
-  });
+//     const queryData = sqlForFilteredSearch(data);
+//     expect(queryData).toEqual(
+//       {
+//         "values": ["%bob%", "5", "10"],
+//         "where": "name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3"
+//       }
+//     );
+//   });
 
-  test("does not work: no keys provided for dataToFilter", function () {
-    const data = {};
+//   test("does not work: no keys provided for dataToFilter", function () {
+//     const data = {};
 
-    try {
-      const queryData = sqlForFilteredSearch(data);
-      throw new Error("shouldn't ever get here");
-    }
-    catch (errs) {
-      expect(errs instanceof BadRequestError).toBeTruthy();
-    }
-  });
+//     try {
+//       const queryData = sqlForFilteredSearch(data);
+//       throw new Error("shouldn't ever get here");
+//     }
+//     catch (errs) {
+//       expect(errs instanceof BadRequestError).toBeTruthy();
+//     }
+//   });
 
-  test("does not work: incorrects keys provided for dataToFilter", function () {
-    const data = { monkey: "silly" };
+//   test("does not work: incorrects keys provided for dataToFilter", function () {
+//     const data = { monkey: "silly" };
 
-    try {
-      const queryData = sqlForFilteredSearch(data);
-      throw new Error("shouldn't ever get here");
-    }
-    catch (errs) {
-      expect(errs instanceof BadRequestError).toBeTruthy();
-    }
-  });
+//     try {
+//       const queryData = sqlForFilteredSearch(data);
+//       throw new Error("shouldn't ever get here");
+//     }
+//     catch (errs) {
+//       expect(errs instanceof BadRequestError).toBeTruthy();
+//     }
+//   });
 
 
-  test("work: no values provided to keys for dataToFilter", function () {
-    const data = { name: "" };
+//   test("does not work: no values provided to keys for dataToFilter", function () {
+//     const data = { name: "" };
 
-    try {
-      const queryData = sqlForFilteredSearch(data);
-      throw new Error("shouldn't ever get here");
-    }
-    catch (errs) {
-      expect(errs instanceof BadRequestError).toBeTruthy();
-    }
-  });
-});
+//     try {
+//       const queryData = sqlForFilteredSearch(data);
+
+//       throw new Error("shouldn't ever get here");
+//     }
+//     catch (errs) {
+    
+//       expect(errs instanceof BadRequestError).toBeTruthy();
+//     }
+//   });
+

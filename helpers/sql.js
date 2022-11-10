@@ -1,5 +1,6 @@
 const { BadRequestError } = require("../expressError");
-
+const jsonschema = require("jsonschema");
+const companyFilterSchema = require("../schemas/companyFilterSearch.json");
 /** Function for generating a database query with dynamic keys.
  * Takes in two objects, one object with the data to update and another
  * for the javascript to SQL name translation.
@@ -36,34 +37,38 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *        [%Apple%, 5, 10]
  *      }
  */
-function sqlForFilteredSearch(dataToFilter) {
-  const dataKeys = Object.keys(dataToFilter);
-  if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
+// function sqlForFilteredSearch(dataToFilter) { //TODO:Move to model with _name
+//   const dataKeys = Object.keys(dataToFilter);
+//   if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
 
-  const values = [];
-  const where = [];
+//   const validator = jsonschema.validate(
+//     dataToFilter,
+//     companyFilterSchema,
+//     { required: true }
+//   );
+//   if (!validator.valid) {
+//     const errs = validator.errors.map(e => e.stack);
+//     throw new BadRequestError(errs);
+//   }
 
-  if (dataToFilter.name) {
-    values.push(`%${dataToFilter.name}%`);
-    where.push(`name ILIKE $${values.length}`);
-  }
+//   const values = [];
+//   const where = [];
 
-  if (dataToFilter.minEmployees) {
-    values.push(`${dataToFilter.minEmployees}`);
-    where.push(`num_employees >= $${values.length}`);
-  }
+//   if (dataToFilter.name !== undefined) { 
+//     values.push(`%${dataToFilter.name}%`);
+//     where.push(`name ILIKE $${values.length}`);
+//   }
 
-  if (dataToFilter.maxEmployees) {
-    values.push(`${dataToFilter.maxEmployees}`);
-    where.push(`num_employees <= $${values.length}`);
-  };
+//   if (dataToFilter.minEmployees !== undefined) {
+//     values.push(`${dataToFilter.minEmployees}`);
+//     where.push(`num_employees >= $${values.length}`);
+//   }
 
-  if (values.length === 0) {
-    throw new BadRequestError("Insufficient search parameters");
-  }
+//   if (dataToFilter.maxEmployees !== undefined) {
+//     values.push(`${dataToFilter.maxEmployees}`);
+//     where.push(`num_employees <= $${values.length}`);
+//   };
 
-  return ({ where: where.join(' AND '), values });
-
-
-}
-module.exports = { sqlForPartialUpdate, sqlForFilteredSearch };
+//   return ({ where: where.join(' AND '), values });
+// }
+module.exports = { sqlForPartialUpdate };

@@ -159,14 +159,10 @@ describe("findFiltered", function () {
   });
 });
 
-test("fail: finds none", async function () {
-  try {
-    await Company.findFiltered({ name: "asdfasdfasdf" });
-    throw new Error("fail test, you shouldn't get here");
-  } catch (err) {
-    console.log(err);
-    expect(err instanceof NotFoundError).toBeTruthy();
-  }
+
+test("works: finds none", async function () {
+    const companies = await Company.findFiltered({ name: "asdfasdfasdf" });
+    expect(companies).toEqual([]);
 });
 
 test("fail: min greater than max", async function () {
@@ -297,6 +293,84 @@ describe("remove", function () {
       throw new Error("fail test, you shouldn't get here");
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+/************************************** sqlFilteredSearch */
+describe("tests for sqlFilteredSearch", function () {
+  test("work: with single valid inputs", function () {
+    const data = { minEmployees: 5 };
+    //const jsToSql = { minEmployees: "min_employees" };
+
+    const queryData = Company._sqlForFilteredSearch(data);
+    expect(queryData).toEqual({
+      "values": ["5"],
+      "where": "num_employees >= $1"
+    });
+  });
+
+  test("work: two valid inputs", function () {
+    const data = { minEmployees: 5, name: "bob" };
+
+    const queryData = Company._sqlForFilteredSearch(data);
+    expect(queryData).toEqual(
+      {
+        "values": ["%bob%", "5"],
+        "where": "name ILIKE $1 AND num_employees >= $2"
+      }
+
+    );
+  });
+
+  test("work: three valid inputs", function () {
+    const data = { minEmployees: 5, maxEmployees: 10, name: "bob" };
+
+    const queryData = Company._sqlForFilteredSearch(data);
+    expect(queryData).toEqual(
+      {
+        "values": ["%bob%", "5", "10"],
+        "where": "name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3"
+      }
+    );
+  });
+
+  test("does not work: no keys provided for dataToFilter", function () {
+    const data = {};
+
+    try {
+      const queryData = Company._sqlForFilteredSearch(data);
+      throw new Error("shouldn't ever get here");
+    }
+    catch (errs) {
+      expect(errs instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+  test("does not work: incorrects keys provided for dataToFilter", function () {
+    const data = { monkey: "silly" };
+
+    try {
+      const queryData = Company._sqlForFilteredSearch(data);
+      throw new Error("shouldn't ever get here");
+    }
+    catch (errs) {
+      expect(errs instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+
+  test("does not work: no values provided to keys for dataToFilter", function () {
+    const data = { name: "" };
+
+    try {
+      const queryData = Company._sqlForFilteredSearch(data);
+
+      throw new Error("shouldn't ever get here");
+    }
+    catch (errs) {
+    
+      expect(errs instanceof BadRequestError).toBeTruthy();
     }
   });
 });
