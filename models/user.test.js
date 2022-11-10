@@ -112,6 +112,13 @@ describe("findAll", function () {
     const users = await User.findAll();
     expect(users).toEqual([
       {
+        username: "admin",
+        firstName: "admin",
+        lastName: "admin",
+        email: "admin@admin.com",
+        isAdmin: true,
+      },
+      {
         username: "u1",
         firstName: "U1F",
         lastName: "U1L",
@@ -125,6 +132,7 @@ describe("findAll", function () {
         email: "u2@email.com",
         isAdmin: false,
       },
+
     ]);
   });
 });
@@ -215,7 +223,7 @@ describe("remove", function () {
   test("works", async function () {
     await User.remove("u1");
     const res = await db.query(
-        "SELECT * FROM users WHERE username='u1'");
+      "SELECT * FROM users WHERE username='u1'");
     expect(res.rows.length).toEqual(0);
   });
 
