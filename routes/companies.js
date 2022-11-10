@@ -28,7 +28,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyNewSchema,
-    {required: true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -45,14 +45,21 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  * Can filter on provided search filters:
  * - minEmployees
  * - maxEmployees
- * - nameLike (will find case-insensitive, partial matches)
+ * - name (will find case-insensitive, partial matches)
  *
  * Authorization required: none
  */
 
 router.get("/", async function (req, res, next) {
-  const companies = await Company.findAll();
-  return res.json({ companies });
+  //console.log("req.query>>>>>>>>>>>>>>", req.query)
+  const queryKeys = Object.keys(req.query);
+  if (queryKeys.length !== 0) {
+    const companies = await Company.findFiltered(req.query);
+    return res.json({ companies });
+  } else {
+    const companies = await Company.findAll();
+    return res.json({ companies });
+  }
 });
 
 /** GET /[handle]  =>  { company }
@@ -83,7 +90,7 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyUpdateSchema,
-    {required:true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
