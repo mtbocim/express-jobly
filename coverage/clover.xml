@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1668041741431" clover="3.2.0">
-  <project timestamp="1668041741431" name="All files">
-    <metrics statements="283" coveredstatements="282" conditionals="78" coveredconditionals="76" methods="52" coveredmethods="51" elements="413" coveredelements="409" complexity="0" loc="283" ncloc="283" packages="5" files="14" classes="14"/>
+<coverage generated="1668042631137" clover="3.2.0">
+  <project timestamp="1668042631137" name="All files">
+    <metrics statements="284" coveredstatements="282" conditionals="83" coveredconditionals="79" methods="52" coveredmethods="51" elements="419" coveredelements="412" complexity="0" loc="284" ncloc="284" packages="5" files="14" classes="14"/>
     <package name="express-jobly">
       <metrics statements="50" coveredstatements="49" conditionals="18" coveredconditionals="16" methods="8" coveredmethods="7"/>
       <file name="app.js" path="/home/mtbocim/Rithm_exercises/express-jobly/app.js">
@@ -120,7 +120,7 @@
       </file>
     </package>
     <package name="express-jobly.models">
-      <metrics statements="82" coveredstatements="82" conditionals="24" coveredconditionals="24" methods="16" coveredmethods="16"/>
+      <metrics statements="84" coveredstatements="83" conditionals="29" coveredconditionals="27" methods="16" coveredmethods="16"/>
       <file name="_testCommon.js" path="/home/mtbocim/Rithm_exercises/express-jobly/models/_testCommon.js">
         <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
         <line num="1" count="2" type="stmt"/>
@@ -136,7 +136,7 @@
         <line num="46" count="2" type="stmt"/>
       </file>
       <file name="company.js" path="/home/mtbocim/Rithm_exercises/express-jobly/models/company.js">
-        <metrics statements="31" coveredstatements="31" conditionals="10" coveredconditionals="10" methods="6" coveredmethods="6"/>
+        <metrics statements="33" coveredstatements="32" conditionals="15" coveredconditionals="13" methods="6" coveredmethods="6"/>
         <line num="3" count="5" type="stmt"/>
         <line num="4" count="5" type="stmt"/>
         <line num="5" count="5" type="stmt"/>
@@ -148,26 +148,28 @@
         <line num="49" count="12" type="stmt"/>
         <line num="58" count="3" type="stmt"/>
         <line num="66" count="2" type="stmt"/>
-        <line num="78" count="6" type="stmt"/>
-        <line num="80" count="5" type="stmt"/>
-        <line num="90" count="5" type="stmt"/>
-        <line num="91" count="5" type="cond" truecount="2" falsecount="0"/>
-        <line num="92" count="4" type="stmt"/>
-        <line num="104" count="5" type="stmt"/>
-        <line num="114" count="5" type="stmt"/>
-        <line num="116" count="5" type="cond" truecount="2" falsecount="0"/>
-        <line num="118" count="3" type="stmt"/>
-        <line num="134" count="6" type="stmt"/>
-        <line num="140" count="5" type="stmt"/>
-        <line num="142" count="5" type="stmt"/>
-        <line num="147" count="5" type="stmt"/>
-        <line num="148" count="5" type="stmt"/>
-        <line num="150" count="5" type="cond" truecount="2" falsecount="0"/>
-        <line num="152" count="3" type="stmt"/>
-        <line num="161" count="4" type="stmt"/>
-        <line num="167" count="4" type="stmt"/>
-        <line num="169" count="4" type="cond" truecount="2" falsecount="0"/>
-        <line num="174" count="5" type="stmt"/>
+        <line num="77" count="6" type="cond" truecount="3" falsecount="2"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="82" count="6" type="stmt"/>
+        <line num="84" count="5" type="stmt"/>
+        <line num="94" count="5" type="stmt"/>
+        <line num="95" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="96" count="4" type="stmt"/>
+        <line num="108" count="5" type="stmt"/>
+        <line num="118" count="5" type="stmt"/>
+        <line num="120" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="122" count="3" type="stmt"/>
+        <line num="138" count="6" type="stmt"/>
+        <line num="144" count="5" type="stmt"/>
+        <line num="146" count="5" type="stmt"/>
+        <line num="151" count="5" type="stmt"/>
+        <line num="152" count="5" type="stmt"/>
+        <line num="154" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="156" count="3" type="stmt"/>
+        <line num="165" count="4" type="stmt"/>
+        <line num="171" count="4" type="stmt"/>
+        <line num="173" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="178" count="5" type="stmt"/>
       </file>
       <file name="user.js" path="/home/mtbocim/Rithm_exercises/express-jobly/models/user.js">
         <metrics statements="40" coveredstatements="40" conditionals="14" coveredconditionals="14" methods="6" coveredmethods="6"/>
@@ -214,7 +216,7 @@
       </file>
     </package>
     <package name="express-jobly.routes">
-      <metrics statements="114" coveredstatements="114" conditionals="14" coveredconditionals="14" methods="22" coveredmethods="22"/>
+      <metrics statements="113" coveredstatements="113" conditionals="14" coveredconditionals="14" methods="22" coveredmethods="22"/>
       <file name="_testCommon.js" path="/home/mtbocim/Rithm_exercises/express-jobly/routes/_testCommon.js">
         <metrics statements="17" coveredstatements="17" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
         <line num="3" count="3" type="stmt"/>
@@ -265,7 +267,7 @@
         <line num="66" count="4" type="stmt"/>
       </file>
       <file name="companies.js" path="/home/mtbocim/Rithm_exercises/express-jobly/routes/companies.js">
-        <metrics statements="37" coveredstatements="37" conditionals="6" coveredconditionals="6" methods="7" coveredmethods="7"/>
+        <metrics statements="36" coveredstatements="36" conditionals="6" coveredconditionals="6" methods="7" coveredmethods="7"/>
         <line num="5" count="4" type="stmt"/>
         <line num="6" count="4" type="stmt"/>
         <line num="8" count="4" type="stmt"/>
@@ -282,7 +284,6 @@
         <line num="38" count="1" type="stmt"/>
         <line num="39" count="1" type="stmt"/>
         <line num="53" count="4" type="stmt"/>
-        <line num="54" count="3" type="stmt"/>
         <line num="55" count="3" type="stmt"/>
         <line num="56" count="3" type="cond" truecount="2" falsecount="0"/>
         <line num="57" count="1" type="stmt"/>

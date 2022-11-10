@@ -32,6 +32,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *      {name : Apple, "minEmployees" : 5, maxEmployees : 10}
  * - Returns: Object like:
  *      {'name ILIKE %Apple% AND num_employees > 5 AND num_employees < 10'}
+ *   // TODO: name ILIKE $1 AND num_employees > $2 AND num_employees < $3
  */
 function sqlForFilteredSearch(dataToFilter) {
   const dataKeys = Object.keys(dataToFilter);

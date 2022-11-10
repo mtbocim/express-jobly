@@ -74,7 +74,12 @@ class Company {
    */
 
   static async findFiltered(queryParams){
-    
+    //TODO: change to schema validation
+    if (queryParams?.minEmployees && 
+      queryParams?.maxEmployees &&
+      Number(queryParams.minEmployees)>Number(queryParams.maxEmployee)){
+        throw new BadRequestError();
+      }
     const where = sqlForFilteredSearch(queryParams);
     const query = 
       `SELECT
