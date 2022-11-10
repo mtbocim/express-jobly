@@ -1,10 +1,12 @@
 "use strict";
 
 const jwt = require("jsonwebtoken");
-const { UnauthorizedError } = require("../expressError");
+const { UnauthorizedError, ForbiddenError } = require("../expressError");
 const {
   authenticateJWT,
   ensureLoggedIn,
+  ensureAdmin,
+  ensureOwner
 } = require("./auth");
 
 
@@ -56,7 +58,35 @@ describe("ensureLoggedIn", function () {
   test("unauth if no login", function () {
     const req = {};
     const res = { locals: {} };
-    //too much next?
     expect(() => ensureLoggedIn(req, res, next, next)).toThrowError();
   });
+});
+
+describe("ensureAdmin", function () {
+  test("works", function () {
+    const req = {};
+    const res = { locals: { user: { username: "test", isAdmin: true } } };
+    ensureAdmin(req, res, next);
+  });
+
+  test("unauth if not admin", function () {
+    const req = {};
+    const res = { locals: { user: { username: "test", isAdmin: false } } };
+    expect(() => ensureAdmin(req, res, next, next)).toThrow(ForbiddenError); // TODO: specific error type
+  });
+});
+
+describe("ensureOwner", function () {
+  test("works", function () {
+    const req = { params: { username: "test" } };
+    const res = { locals: { user: { username: "test" } } };
+    ensureOwner(req, res, next);
+  });
+  //TODO: admin can also pass
+
+  test("unauth if not owner", function () {
+    const req = {};
+    const res = { locals: { user: { username: "test" } } };
+    expect(() => ensureOwner(req, res, next, next)).toThrowError(); // TODO: specific error type
+  }); //TODO: TEST supply req usernames
 });

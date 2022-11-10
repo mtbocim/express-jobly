@@ -122,7 +122,6 @@ describe("POST /auth/register", function () {
         password: "password",
         email: "email3@email.com",
       });
-    console.log('RESP>>>>>>>>>>', resp);
     expect(resp.statusCode).toEqual(400);
   });
 });

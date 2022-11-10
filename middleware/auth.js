@@ -18,8 +18,7 @@ const { UnauthorizedError, ForbiddenError } = require("../expressError");
 function authenticateJWT(req, res, next) {
   try {
     const authHeader = req.headers && req.headers.authorization;
-    console.log("headers>>>>>>>>>>>>>>>", req.headers);
-    console.log("authorization>>>>>>>>>>>>>", req.headers.authorization);
+
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
       res.locals.user = jwt.verify(token, SECRET_KEY);
@@ -44,22 +43,21 @@ function ensureLoggedIn(req, res, next) {
 /** Middleware to verify if user has admin priveleges
  *
  * If not, raise Forbidden.
- */
+ */ //TODO: Add ensureLoggedIn logic
 function ensureAdmin(req, res, next) {
   if (!res.locals.user.isAdmin === true) throw new ForbiddenError();
   return next();
 
 }
 
-/** Middle to verify if user has edit priveledge (admin or ownership)
+/** Middleware to verify if user has edit privelege (admin or ownership)
  *
  * If not, raise Forbidden
-*/
+*/ //TODO: CHANGE TITLE Add ensureLoggedIn logic
 function ensureOwner(req, res, next) {
-
   if (res.locals.user.username === req.params.username ||
     res.locals.user.isAdmin === true) { return next(); }
-  else {
+  else { // CHANGE FORBIDDEN ERROR TO UNAUTHORIZED (everywhere)
     throw new ForbiddenError();
   }
 
