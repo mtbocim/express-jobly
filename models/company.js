@@ -18,16 +18,16 @@ class Company {
 
   static async create({ handle, name, description, numEmployees, logoUrl }) {
     const duplicateCheck = await db.query(
-        `SELECT handle
+      `SELECT handle
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]);
 
     if (duplicateCheck.rows[0])
       throw new BadRequestError(`Duplicate company: ${handle}`);
 
     const result = await db.query(
-        `INSERT INTO companies(
+      `INSERT INTO companies(
           handle,
           name,
           description,
@@ -36,13 +36,13 @@ class Company {
            VALUES
              ($1, $2, $3, $4, $5)
            RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`,
-        [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
-        ],
+      [
+        handle,
+        name,
+        description,
+        numEmployees,
+        logoUrl,
+      ],
     );
     const company = result.rows[0];
 
@@ -56,7 +56,7 @@ class Company {
 
   static async findAll() {
     const companiesRes = await db.query(
-        `SELECT handle,
+      `SELECT handle,
                 name,
                 description,
                 num_employees AS "numEmployees",
@@ -67,21 +67,25 @@ class Company {
   }
 
   /**Find companies by filter
-   * 
+   *
    * Accepts an object container search values.
-   * 
+   *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    */
 
-  static async findFiltered(queryParams){
-    //TODO: change to schema validation
-    if (queryParams?.minEmployees && 
-      queryParams?.maxEmployees &&
-      Number(queryParams.minEmployees)>Number(queryParams.maxEmployee)){
-        throw new BadRequestError();
-      }
-    const where = sqlForFilteredSearch(queryParams);
-    const query = 
+  static async findFiltered(queryParams) {
+    const { minEmployees, maxEmployees } = queryParams;
+
+    if (minEmployees && maxEmployees
+      && minEmployees > maxEmployees) {
+      throw new BadRequestError("minEmployees must be less than maxEmployees.");
+    }
+
+    const { where, values } = sqlForFilteredSearch(queryParams);
+    console.log(">>>>>>>WHERE", where);
+    console.log(">>>>>>>VALUES", values);
+
+    const query =
       `SELECT
         handle,
         name,
@@ -91,10 +95,13 @@ class Company {
 
         FROM companies
         WHERE ${where}
-        ORDER BY name`;
-      const companiesRes = await db.query(query);
-      if (companiesRes.rows.length===0) throw new NotFoundError('No companies found');
-      return companiesRes.rows;
+        ORDER BY name` ;
+
+    const companiesRes = await db.query(query, values);
+
+    if (companiesRes.rows.length === 0) throw new NotFoundError('No companies found');
+
+    return companiesRes.rows;
   }
 
   /** Given a company handle, return data about company.
@@ -107,14 +114,14 @@ class Company {
 
   static async get(handle) {
     const companyRes = await db.query(
-        `SELECT handle,
+      `SELECT handle,
                 name,
                 description,
                 num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]);
 
     const company = companyRes.rows[0];
 
@@ -137,11 +144,11 @@ class Company {
 
   static async update(handle, data) {
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          numEmployees: "num_employees",
-          logoUrl: "logo_url",
-        });
+      data,
+      {
+        numEmployees: "num_employees",
+        logoUrl: "logo_url",
+      });
     const handleVarIdx = "$" + (values.length + 1);
 
     const querySql = `
@@ -164,11 +171,11 @@ class Company {
 
   static async remove(handle) {
     const result = await db.query(
-        `DELETE
+      `DELETE
            FROM companies
            WHERE handle = $1
            RETURNING handle`,
-        [handle]);
+      [handle]);
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);

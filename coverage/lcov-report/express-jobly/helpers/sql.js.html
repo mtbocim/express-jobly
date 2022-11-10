@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>25/25</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>23/23</span>
             </div>
         
             
@@ -116,7 +116,21 @@
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
 <a name='L53'></a><a href='#L53'>53</a>
-<a name='L54'></a><a href='#L54'>54</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">7x</span>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -152,20 +166,34 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
@@ -203,22 +231,36 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *      {name : Apple, "minEmployees" : 5, maxEmployees : 10}
  * - Returns: Object like:
  *      {'name ILIKE %Apple% AND num_employees &gt; 5 AND num_employees &lt; 10'}
+ *   // TODO: name ILIKE $1 AND num_employees &gt; $2 AND num_employees &lt; $3
  */
 function sqlForFilteredSearch(dataToFilter) {
   const dataKeys = Object.keys(dataToFilter);
   if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
 &nbsp;
-  const search = [];
+  const values = [];
+  const where = [];
 &nbsp;
-  if (dataToFilter.name) search.push(`name ILIKE '%${dataToFilter.name}%'`);
-  if (dataToFilter.minEmployees) search.push(`num_employees &gt;= ${dataToFilter.minEmployees}`);
-  if (dataToFilter.maxEmployees) search.push(`num_employees &lt;= ${dataToFilter.maxEmployees}`);
+  if (dataToFilter.name) {
+    values.push(`%${dataToFilter.name}%`); // LITERAL VALUE
+    where.push(`name ILIKE $${values.length}`); // STRING CONSTRUCTOR
+  }
 &nbsp;
-  if (search.length === 0) {
+  if (dataToFilter.minEmployees) {
+    values.push(`${dataToFilter.minEmployees}`);
+    where.push(`num_employees &gt;= $${values.length}`);
+  }
+&nbsp;
+  if (dataToFilter.maxEmployees) {
+    values.push(`${dataToFilter.maxEmployees}`);
+    where.push(`num_employees &lt;= $${values.length}`);
+  };
+&nbsp;
+  if (values.length === 0) {
     throw new BadRequestError("Insufficient search parameters");
   }
 &nbsp;
-  return search.join(' AND ');
+  return ({ where: where.join(' AND '), values });
+&nbsp;
 &nbsp;
 }
 module.exports = { sqlForPartialUpdate, sqlForFilteredSearch };
@@ -229,7 +271,7 @@ module.exports = { sqlForPartialUpdate, sqlForFilteredSearch };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2022-11-10T01:10:31.113Z
+                at 2022-11-10T02:29:19.960Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

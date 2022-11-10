@@ -91,7 +91,7 @@ describe("findAll", function () {
 
 describe("findFiltered", function () {
   test("works: finds filtered set of companies", async function () {
-    let companies = await Company.findFiltered({ name: "C1" })
+    let companies = await Company.findFiltered({ name: "C1" });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -100,10 +100,10 @@ describe("findFiltered", function () {
         numEmployees: 1,
         logoUrl: "http://c1.img",
       }
-    ])
+    ]);
   });
   test("works: finds filtered set of companies", async function () {
-    let companies = await Company.findFiltered({ name: "C" })
+    let companies = await Company.findFiltered({ name: "C" });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -130,7 +130,7 @@ describe("findFiltered", function () {
   });
 
   test("works: finds filtered set of companies, 2 params", async function () {
-    let companies = await Company.findFiltered({ name: "C", minEmployees: 2 })
+    let companies = await Company.findFiltered({ name: "C", minEmployees: 2 });
     expect(companies).toEqual([
       {
         handle: "c2",
@@ -166,6 +166,16 @@ test("fail: finds none", async function () {
   } catch (err) {
     console.log(err);
     expect(err instanceof NotFoundError).toBeTruthy();
+  }
+});
+
+test("fail: min greater than max", async function () {
+  try {
+    await Company.findFiltered({ minEmployees: 10, maxEmployees: 5 });
+    throw new Error("fail test, you shouldn't get here");
+  } catch (err) {
+    console.log(err);
+    expect(err instanceof BadRequestError).toBeTruthy();
   }
 });
 

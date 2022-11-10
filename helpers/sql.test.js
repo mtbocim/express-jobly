@@ -93,7 +93,10 @@ describe("tests for sqlFilteredSearch", function () {
     //const jsToSql = { minEmployees: "min_employees" };
 
     const queryData = sqlForFilteredSearch(data);
-    expect(queryData).toEqual('num_employees >= 5');
+    expect(queryData).toEqual({
+      "values": ["5"],
+      "where": "num_employees >= $1"
+    });
   });
 
   test("work: two valid inputs", function () {
@@ -101,7 +104,11 @@ describe("tests for sqlFilteredSearch", function () {
 
     const queryData = sqlForFilteredSearch(data);
     expect(queryData).toEqual(
-      `name ILIKE '%bob%' AND num_employees >= 5`
+      {
+        "values": ["%bob%", "5"],
+        "where": "name ILIKE $1 AND num_employees >= $2"
+      }
+
     );
   });
 
@@ -110,7 +117,10 @@ describe("tests for sqlFilteredSearch", function () {
 
     const queryData = sqlForFilteredSearch(data);
     expect(queryData).toEqual(
-      `name ILIKE '%bob%' AND num_employees >= 5 AND num_employees <= 10`
+      {
+        "values": ["%bob%", "5", "10"],
+        "where": "name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3"
+      }
     );
   });
 

@@ -31,24 +31,39 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  * - Accepts: Object like:
  *      {name : Apple, "minEmployees" : 5, maxEmployees : 10}
  * - Returns: Object like:
- *      {'name ILIKE %Apple% AND num_employees > 5 AND num_employees < 10'}
- *   // TODO: name ILIKE $1 AND num_employees > $2 AND num_employees < $3
+ *      {
+ *        'name ILIKE $1 AND num_employees > $2 AND num_employees < $3',
+ *        [%Apple%, 5, 10]
+ *      }
  */
 function sqlForFilteredSearch(dataToFilter) {
   const dataKeys = Object.keys(dataToFilter);
   if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
 
-  const search = [];
+  const values = [];
+  const where = [];
 
-  if (dataToFilter.name) search.push(`name ILIKE '%${dataToFilter.name}%'`);
-  if (dataToFilter.minEmployees) search.push(`num_employees >= ${dataToFilter.minEmployees}`);
-  if (dataToFilter.maxEmployees) search.push(`num_employees <= ${dataToFilter.maxEmployees}`);
+  if (dataToFilter.name) {
+    values.push(`%${dataToFilter.name}%`);
+    where.push(`name ILIKE $${values.length}`);
+  }
 
-  if (search.length === 0) {
+  if (dataToFilter.minEmployees) {
+    values.push(`${dataToFilter.minEmployees}`);
+    where.push(`num_employees >= $${values.length}`);
+  }
+
+  if (dataToFilter.maxEmployees) {
+    values.push(`${dataToFilter.maxEmployees}`);
+    where.push(`num_employees <= $${values.length}`);
+  };
+
+  if (values.length === 0) {
     throw new BadRequestError("Insufficient search parameters");
   }
 
-  return search.join(' AND ');
+  return ({ where: where.join(' AND '), values });
+
 
 }
 module.exports = { sqlForPartialUpdate, sqlForFilteredSearch };
