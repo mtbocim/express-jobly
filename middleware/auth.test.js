@@ -6,7 +6,7 @@ const {
   authenticateJWT,
   ensureLoggedIn,
   ensureAdmin,
-  ensureOwner
+  ensureOwnerOrAdmin
 } = require("./auth");
 
 
@@ -58,35 +58,62 @@ describe("ensureLoggedIn", function () {
   test("unauth if no login", function () {
     const req = {};
     const res = { locals: {} };
-    expect(() => ensureLoggedIn(req, res, next, next)).toThrowError();
+    expect(() => ensureLoggedIn(req, res, next, next))
+      .toThrow(UnauthorizedError);
   });
 });
 
 describe("ensureAdmin", function () {
-  test("works", function () {
+  test("works for admin", function () {
     const req = {};
     const res = { locals: { user: { username: "test", isAdmin: true } } };
     ensureAdmin(req, res, next);
   });
 
+  test("unauth if not logged in", function () {
+    const req = {};
+    const res = {locals:{}};
+    expect(() => ensureAdmin(req, res, next, next)).toThrow(UnauthorizedError);
+  });
+
   test("unauth if not admin", function () {
     const req = {};
     const res = { locals: { user: { username: "test", isAdmin: false } } };
-    expect(() => ensureAdmin(req, res, next, next)).toThrow(ForbiddenError); // TODO: specific error type
+    expect(() => ensureAdmin(req, res, next, next)).toThrow(UnauthorizedError);
   });
 });
 
-describe("ensureOwner", function () {
-  test("works", function () {
+describe("ensureOwnerOrAdmin", function () {
+  test("works for current user", function () {
     const req = { params: { username: "test" } };
-    const res = { locals: { user: { username: "test" } } };
-    ensureOwner(req, res, next);
+    const res = { locals: { user: { username: "test", isAdmin: false } } };
+    ensureOwnerOrAdmin(req, res, next);
   });
-  //TODO: admin can also pass
+
+  test("works for admin with different username", function () {
+    const req = { params: { username: "test123" } };
+    const res = { locals: { user: { username: "notTest123", isAdmin:true } } };
+    ensureOwnerOrAdmin(req, res, next);
+  });
+
+  test("works for admin", function () {
+    const req = {};
+    const res = { locals: { user: { username: "test", isAdmin: true } } };
+    ensureOwnerOrAdmin(req, res, next);
+  });
 
   test("unauth if not owner", function () {
     const req = {};
     const res = { locals: { user: { username: "test" } } };
-    expect(() => ensureOwner(req, res, next, next)).toThrowError(); // TODO: specific error type
-  }); //TODO: TEST supply req usernames
+    expect(() => ensureOwnerOrAdmin(req, res, next, next))
+      .toThrow(UnauthorizedError);
+  });
+
+  test("unauth if not logged in", function () {
+    const req = {};
+    const res = {locals:{}};
+    expect(() => ensureOwnerOrAdmin(req, res, next, next))
+      .toThrow(UnauthorizedError);
+  });
+
 });

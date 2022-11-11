@@ -22,10 +22,10 @@ const router = new express.Router();
  *
  * Returns { handle, name, description, numEmployees, logoUrl }
  *
- * Authorization required: login
+ * Authorization required: login, admin
  */
-//TODO: ensureAdmin req.
-router.post("/", ensureLoggedIn, async function (req, res, next) {
+
+router.post("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyNewSchema,

@@ -70,7 +70,7 @@ class Company {
 
   /**Find companies by filter
    *
-   * Accepts an object container search values.
+   * Accepts an object containing search values.
    * Valid filter keywords:
    *  -minEmployees
    *  -maxEmployees

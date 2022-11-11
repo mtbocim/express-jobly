@@ -4,7 +4,7 @@
 
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../config");
-const { UnauthorizedError, ForbiddenError } = require("../expressError");
+const { UnauthorizedError } = require("../expressError");
 
 
 /** Middleware: Authenticate user.
@@ -42,23 +42,27 @@ function ensureLoggedIn(req, res, next) {
 
 /** Middleware to verify if user has admin priveleges
  *
- * If not, raise Forbidden.
- */ //TODO: Add ensureLoggedIn logic
+ * If not, raise Unauthorized.
+ */
 function ensureAdmin(req, res, next) {
-  if (!res.locals.user.isAdmin === true) throw new ForbiddenError();
+  if (!res.locals?.user) throw new UnauthorizedError();
+
+  if (res.locals.user.isAdmin !== true) throw new UnauthorizedError();
   return next();
 
 }
 
 /** Middleware to verify if user has edit privelege (admin or ownership)
  *
- * If not, raise Forbidden
-*/ //TODO: CHANGE TITLE Add ensureLoggedIn logic
-function ensureOwner(req, res, next) {
-  if (res.locals.user.username === req.params.username ||
+ * If not, raise Unauthorized
+*/
+function ensureOwnerOrAdmin(req, res, next) {
+  if (!res.locals?.user) throw new UnauthorizedError();
+
+  if (res.locals.user.username === req.params?.username ||
     res.locals.user.isAdmin === true) { return next(); }
-  else { // CHANGE FORBIDDEN ERROR TO UNAUTHORIZED (everywhere)
-    throw new ForbiddenError();
+  else {
+    throw new UnauthorizedError();
   }
 
 }
@@ -70,5 +74,6 @@ function ensureOwner(req, res, next) {
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
-  ensureAdmin, ensureOwner
+  ensureAdmin, 
+  ensureOwnerOrAdmin
 };
