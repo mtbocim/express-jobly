@@ -144,7 +144,7 @@ class Company {
    *
    * Throws NotFoundError if not found.
    */
-
+  //TODO: ADD JSONschemavalidator
   static async update(handle, data) {
     const { setCols, values } = sqlForPartialUpdate(
       data,

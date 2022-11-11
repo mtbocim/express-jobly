@@ -296,21 +296,163 @@ describe("findFiltered", function () {
 /************************************** get (single) */
 
 //find company by id
-//not found if no matching id
+
+describe("get", function () {
+
+  test("works", async function () {
+    let job = await Job.get(1);
+    console.log(' test job>>>>>>>>>>>>>>>>>>>>>>>', job);
+
+    expect(job).toEqual({
+      "id": expect.any(Number),
+      "title": "j1",
+      "salary": 1000,
+      "equity": "0",
+      "companyHandle": "c1",
+    });
+  });
+
+  test("not found if no such job", async function () {
+    try {
+      await Job.get(100);
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+  test("bad request if passed non-integer id", async function () {
+    try {
+      await Job.get('100');
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
+});
 
 
 /************************************** update */
 
-//works for string
-//works for int
-//works for bool
-//works for nulls in salary and equity
-//fails for null in title
-//fails not found for given id
-//fails if bad data: bad request
+describe("update", function () {
+
+  test("works with one field: title", async function () {
+    const updateData = {
+      title: "New"
+    };
+    const job = await Job.update(1, updateData);
+    expect(job).toEqual({
+      "id": expect.any(Number),
+      "title": "New",
+      "salary": 1000,
+      "equity": "0",
+      "companyHandle": "c1",
+    });
+  });
+
+  test("works with one field: salary", async function () {
+    const updateData = {
+      salary: 5000
+    };
+    let job = await Job.update(1, updateData);
+    expect(job).toEqual({
+      "id": expect.any(Number),
+      "title": "j1",
+      "salary": 5000,
+      "equity": "0",
+      "companyHandle": "c1",
+    });
+  });
+
+  test("works with one field: equity", async function () {
+    const updateData = {
+      equity: "0.5"
+    };
+    const job = await Job.update(1, updateData);
+    expect(job).toEqual({
+      "id": expect.any(Number),
+      "title": "j1",
+      "salary": 1000,
+      "equity": "0.5",
+      "companyHandle": "c1",
+    });
+  });
+
+  test("works with *all* fields", async function () {
+    const updateData = {
+      title: "New",
+      salary: 5000,
+      equity: "0.5"
+    };
+
+    const job = await Job.update(1, updateData);
 
 
+    expect(job).toEqual({
+      "id": expect.any(Number),
+      "title": "New",
+      "salary": 5000,
+      "equity": "0.5",
+      "companyHandle": "c1",
+    });
+  });
 
+  test("works: null fields", async function () {
+    const updateDataSetNulls = {
+      title: "New",
+      salary: null,
+      equity: null,
+    };
+    const job = await Job.update(1, updateDataSetNulls);
+
+    expect(job).toEqual({
+      "id": expect.any(Number),
+      "title": "New",
+      "salary": null,
+      "equity": null,
+      "companyHandle": "c1",
+    });
+  });
+
+  test("bad request: null title field", async function () {
+    const updateDataSetNulls = {
+      title: null
+    };
+    try {
+      const job = await Job.update(1, updateDataSetNulls);
+      throw new Error("fail test, you shouldn't get here");
+    }
+    catch (err) {
+      console.log('error >>>>>>>>>', err);
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+
+  });
+
+  test("not found if no such job", async function () {
+    const updateData = {
+      title: "New",
+      salary: 5000,
+      equity: "0.5"
+    };
+    try {
+      await Job.update(100, updateData);
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
+  test("bad request with no data", async function () {
+    try {
+      await Job.update(1, {});
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+
+});
 
 /************************************** remove */
 

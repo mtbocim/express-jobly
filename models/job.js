@@ -2,6 +2,7 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 const jsonschema = require("jsonschema");
 const jobNewSchema = require("../schemas/jobNew.json");
 const jobFilterSearchSchema = require("../schemas/jobFilterSearch.json");
@@ -22,7 +23,6 @@ class Job {
      */
 
     static async create({ title, salary, equity, handle }) {
-        console.log("HANDLE>>>>>>>>>>>>>>>>>>", handle);
         const validator = jsonschema.validate(
             { title, salary, equity, handle },
             jobNewSchema,
@@ -125,6 +125,30 @@ class Job {
      */
 
     static async get(id) {
+        if (typeof (id) !== 'number') {
+            throw new BadRequestError(`No job: ${id}`);
+        };
+
+        const jobRes = await db.query(
+            `SELECT id,
+                title,
+                salary,
+                equity,
+                company_handle AS "companyHandle"
+            FROM jobs
+            WHERE id = $1`,
+            [id]);
+
+        const job = jobRes.rows[0];
+        console.log('job>>>>>>>>>>>>>>>>>>>>>>>', job);
+
+        if (!job) throw new NotFoundError(`No job: ${id}`);
+
+        return job;
+
+
+
+
 
     }
 
@@ -141,7 +165,29 @@ class Job {
     * Throws NotFoundError if not found.
     */
 
+
     static async update(id, data) {
+        if (data.title === null) {
+            throw new BadRequestError("Title field cannot be null");
+        }
+
+        const { setCols, values } = sqlForPartialUpdate(
+            data, {});
+
+        const handleVarIdx = "$" + (values.length + 1);
+
+        const querySql = `
+            UPDATE jobs
+            SET ${setCols}
+              WHERE id = ${handleVarIdx}
+              RETURNING id, title, salary, equity, company_handle AS "companyHandle"`;
+        const result = await db.query(querySql, [...values, id]);
+        const job = result.rows[0];
+
+        if (!job) throw new NotFoundError(`No job: ${id}`);
+
+        return job;
+
 
     }
 

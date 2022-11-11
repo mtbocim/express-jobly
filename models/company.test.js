@@ -161,8 +161,8 @@ describe("findFiltered", function () {
 
 
 test("works: finds none", async function () {
-    const companies = await Company.findFiltered({ name: "asdfasdfasdf" });
-    expect(companies).toEqual([]);
+  const companies = await Company.findFiltered({ name: "asdfasdfasdf" });
+  expect(companies).toEqual([]);
 });
 
 test("fail: min greater than max", async function () {
@@ -212,7 +212,7 @@ describe("update", function () {
   };
 
   test("works", async function () {
-    let company = await Company.update("c1", updateData);
+    const company = await Company.update("c1", updateData);
     expect(company).toEqual({
       handle: "c1",
       ...updateData,
@@ -239,7 +239,7 @@ describe("update", function () {
       logoUrl: null,
     };
 
-    let company = await Company.update("c1", updateDataSetNulls);
+    const company = await Company.update("c1", updateDataSetNulls);
     expect(company).toEqual({
       handle: "c1",
       ...updateDataSetNulls,
@@ -369,7 +369,7 @@ describe("tests for sqlFilteredSearch", function () {
       throw new Error("shouldn't ever get here");
     }
     catch (errs) {
-    
+
       expect(errs instanceof BadRequestError).toBeTruthy();
     }
   });
