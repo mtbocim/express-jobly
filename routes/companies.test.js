@@ -275,7 +275,7 @@ describe("GET /companies/:handle", function () {
 /************************************** PATCH /companies/:handle */
 
 describe("PATCH /companies/:handle", function () {
-  test("works for admin", async function () {
+  test("works for admin - one param", async function () {
     const resp = await request(app)
       .patch(`/companies/c1`)
       .send({
@@ -289,6 +289,44 @@ describe("PATCH /companies/:handle", function () {
         logoUrl: "http://c1.img",
         name: "C1-new",
         numEmployees: 1
+      },
+    });
+  });
+  test("works for admin - two param", async function () {
+    const resp = await request(app)
+      .patch(`/companies/c1`)
+      .send({
+        name: "C1-new",
+        description: "Desc1-new"
+      })
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({
+      company: {
+        description: "Desc1-new",
+        handle: "c1",
+        logoUrl: "http://c1.img",
+        name: "C1-new",
+        numEmployees: 1
+      },
+    });
+  });
+  test("works for admin - *all* param", async function () {
+    const resp = await request(app)
+      .patch(`/companies/c1`)
+      .send({
+        name: "C1-new",
+        description: "Desc1-new",
+        logoUrl: "http://c1-new.img",
+        numEmployees: 5
+      })
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({
+      company: {
+        description: "Desc1-new",
+        handle: "c1",
+        logoUrl: "http://c1-new.img",
+        name: "C1-new",
+        numEmployees: 5
       },
     });
   });
