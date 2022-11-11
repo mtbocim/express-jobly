@@ -305,7 +305,7 @@ describe("tests for sqlFilteredSearch", function () {
 
     const queryData = Company._sqlForFilteredSearch(data);
     expect(queryData).toEqual({
-      "values": ["5"],
+      "values": [5],
       "where": "num_employees >= $1"
     });
   });
@@ -316,7 +316,7 @@ describe("tests for sqlFilteredSearch", function () {
     const queryData = Company._sqlForFilteredSearch(data);
     expect(queryData).toEqual(
       {
-        "values": ["%bob%", "5"],
+        "values": ["%bob%", 5],
         "where": "name ILIKE $1 AND num_employees >= $2"
       }
 
@@ -329,7 +329,7 @@ describe("tests for sqlFilteredSearch", function () {
     const queryData = Company._sqlForFilteredSearch(data);
     expect(queryData).toEqual(
       {
-        "values": ["%bob%", "5", "10"],
+        "values": ["%bob%", 5, 10],
         "where": "name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3"
       }
     );
@@ -347,7 +347,7 @@ describe("tests for sqlFilteredSearch", function () {
     }
   });
 
-  test("does not work: incorrects keys provided for dataToFilter", function () {
+  test("bad request: incorrects keys provided for dataToFilter", function () {
     const data = { monkey: "silly" };
 
     try {

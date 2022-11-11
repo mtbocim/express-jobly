@@ -222,12 +222,12 @@ class Company {
     }
 
     if (dataToFilter.minEmployees !== undefined) {
-      values.push(`${dataToFilter.minEmployees}`);
+      values.push(dataToFilter.minEmployees);
       where.push(`num_employees >= $${values.length}`);
     }
 
     if (dataToFilter.maxEmployees !== undefined) {
-      values.push(`${dataToFilter.maxEmployees}`);
+      values.push(dataToFilter.maxEmployees);
       where.push(`num_employees <= $${values.length}`);
     };
 

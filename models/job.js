@@ -4,6 +4,7 @@ const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const jsonschema = require("jsonschema");
 const jobNewSchema = require("../schemas/jobNew.json");
+const jobFilterSearchSchema = require("../schemas/jobFilterSearch.json");
 
 /**Related functions for jobs */
 
@@ -68,10 +69,18 @@ class Job {
     /**
      * Find all jobs.
      *
-     * Returns [{id, title, salary, equity, handle}, ...]
+     * Returns [{id, title, salary, equity, companyHandle}, ...]
      */
     static async findAll() {
-
+        const jobsRes = await db.query(
+            `SELECT id,
+                title,
+                salary,
+                equity,
+                company_handle AS "companyHandle"
+            FROM jobs
+            ORDER BY company_handle`);
+        return jobsRes.rows;
     }
 
     /**
@@ -110,9 +119,9 @@ class Job {
     * This is a "partial update" --- it's fine if data doesn't contain all the
     * fields; this only changes provided ones.
     *
-    * Data can include: {title, salary, equity, handle}
+    * Data can include: {title, salary, equity}
     *
-    * Returns {id, title, salary, equity, handle}
+    * Returns {id, title, salary, equity, companyHandle}
     *
     * Throws NotFoundError if not found.
     */
@@ -147,8 +156,40 @@ class Job {
      */
 
     static _sqlForFilteredSearch(dataToFilter) {
+        const dataKeys = Object.keys(dataToFilter);
+        if (dataKeys.length === 0) throw new BadRequestError("No Data for filter");
+
+        const validator = jsonschema.validate(
+            dataToFilter,
+            jobFilterSearchSchema,
+            { required: true }
+        );
+        if (!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
+
+        const values = [];
+        const where = [];
+
+        if (dataToFilter.title !== undefined) {
+            values.push(`%${dataToFilter.title}%`);
+            where.push(`title ILIKE $${values.length}`);
+        }
+        if (dataToFilter.minSalary !== undefined) {
+            values.push(dataToFilter.minSalary);
+            where.push(`salary >= $${values.length}`);
+        }
+        if (dataToFilter.hasEquity === true) {
+            where.push(`equity > 0`)
+        }
+
+        return ({ where: where.join(' AND '), values });
 
     }
 }
 
 module.exports = Job;
+
+
+//SELECT title, salary, equity FROM jobs WHERE equity>0;
