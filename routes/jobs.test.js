@@ -219,9 +219,14 @@ describe("GET /jobs/:id", function () {
         });
     });
 
-    test("not found for no such company", async function () {
-        const resp = await request(app).get(`/companies/nope`);
+    test("not found for no such job", async function () {
+        const resp = await request(app).get(`/jobs/100`);
         expect(resp.statusCode).toEqual(404);
+    });
+
+    test("bad request if :id not integer", async function () {
+        const resp = await request(app).get(`/jobs/nope`);
+        expect(resp.statusCode).toEqual(400);
     });
 });
 
@@ -285,6 +290,16 @@ describe("PATCH /jobs/:id", function () {
         expect(resp.statusCode).toEqual(404);
     });
 
+    test("Bad request on incorrect :id for admin", async function () {
+        const resp = await request(app)
+            .patch(`/jobs/job`)
+            .send({
+                title: "J1-new",
+            })
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toEqual(400);
+    });
+
 
     test("unauth on invalid data for non-admin", async function () {
         const resp = await request(app)
@@ -337,5 +352,12 @@ describe("DELETE /jobs/:id", function () {
             .delete(`/jobs/100`)
             .set("authorization", `Bearer ${adminToken}`);
         expect(resp.statusCode).toEqual(404);
+    });
+
+    test("bad request if :id not integer, for admin", async function () {
+        const resp = await request(app)
+            .delete(`/jobs/job`)
+            .set("authorization", `Bearer ${adminToken}`);
+        expect(resp.statusCode).toEqual(400);
     });
 });

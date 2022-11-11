@@ -91,9 +91,8 @@ router.get("/", async function (req, res, next) {
 router.get("/:id", async function (req, res, next) {
 
     const params = req.params;
-    if (params.id !== undefined) {
-        params.id = +params.id;
-    }
+    params.id = +params.id;
+
     if (isNaN(params.id)) {
         throw new BadRequestError("id must be an integer");
     }
@@ -119,9 +118,9 @@ router.patch(
     ensureAdmin,
     async function (req, res, next) {
         const params = req.params;
-        if (params.id !== undefined) {
-            params.id = +params.id;
-        }
+
+        params.id = +params.id;
+
         if (isNaN(params.id)) {
             throw new BadRequestError("id must be an integer");
         }
@@ -152,9 +151,9 @@ router.delete(
     async function (req, res, next) {
 
         const params = req.params;
-        if (params.id !== undefined) {
-            params.id = +params.id;
-        }
+
+        params.id = +params.id;
+
         if (isNaN(params.id)) {
             throw new BadRequestError("id must be an integer");
         }

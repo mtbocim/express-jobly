@@ -230,11 +230,18 @@ describe("GET /companies/:handle", function () {
     const resp = await request(app).get(`/companies/c1`);
     expect(resp.body).toEqual({
       company: {
-        handle: "c1",
-        name: "C1",
         description: "Desc1",
-        numEmployees: 1,
+        handle: "c1",
+        jobs: [{
+          "companyHandle": "c1",
+          "equity": "0",
+          "id": 1,
+          "salary": 5000,
+          "title": "j1",
+        }],
         logoUrl: "http://c1.img",
+        name: "C1",
+        numEmployees: 1,
       },
     });
   });
@@ -243,11 +250,18 @@ describe("GET /companies/:handle", function () {
     const resp = await request(app).get(`/companies/c2`);
     expect(resp.body).toEqual({
       company: {
-        handle: "c2",
-        name: "C2",
         description: "Desc2",
-        numEmployees: 2,
+        handle: "c2",
+        jobs: [{
+          "companyHandle": "c2",
+          "equity": "0.5",
+          "id": 2,
+          "salary": 1000000,
+          "title": "j2",
+        }],
         logoUrl: "http://c2.img",
+        name: "C2",
+        numEmployees: 2
       },
     });
   });
@@ -270,11 +284,11 @@ describe("PATCH /companies/:handle", function () {
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.body).toEqual({
       company: {
-        handle: "c1",
-        name: "C1-new",
         description: "Desc1",
-        numEmployees: 1,
+        handle: "c1",
         logoUrl: "http://c1.img",
+        name: "C1-new",
+        numEmployees: 1
       },
     });
   });

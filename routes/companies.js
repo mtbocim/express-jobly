@@ -12,6 +12,7 @@ const Company = require("../models/company");
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyFilterSchema = require("../schemas/companyFilterSearch.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const Job = require("../models/job");
 
 const router = new express.Router();
 
