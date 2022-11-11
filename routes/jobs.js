@@ -12,7 +12,7 @@ const Job = require("../models/job");
 
 const jobNewSchema = require("../schemas/jobNew.json");
 const jobFilterSchema = require("../schemas/jobFilterSearch.json");
-const jobUpdateSchema = require("../schemas/jobUpdate.json")
+const jobUpdateSchema = require("../schemas/jobUpdate.json");
 
 const router = new express.Router();
 
@@ -53,9 +53,12 @@ router.post("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
     const query = req.query;
-    
-    if (query.salary !== undefined) {
-        query.salary = +query.salary;
+
+    if (query.minSalary !== undefined) {
+        query.minSalary = +query.minSalary;
+    }
+    if (query.hasEquity === 'true') {
+        query.hasEquity = true;
     }
 
     const queryKeys = Object.keys(query);
@@ -86,13 +89,13 @@ router.get("/", async function (req, res, next) {
  */
 
 router.get("/:id", async function (req, res, next) {
-    
+
     const params = req.params;
     if (params.id !== undefined) {
         params.id = +params.id;
     }
-    if(isNaN(params.id)){
-        throw new BadRequestError("id must be an integer")
+    if (isNaN(params.id)) {
+        throw new BadRequestError("id must be an integer");
     }
 
     const job = await Job.get(params.id);
@@ -119,8 +122,8 @@ router.patch(
         if (params.id !== undefined) {
             params.id = +params.id;
         }
-        if(isNaN(params.id)){
-            throw new BadRequestError("id must be an integer")
+        if (isNaN(params.id)) {
+            throw new BadRequestError("id must be an integer");
         }
         const validator = jsonschema.validate(
             req.body,
@@ -152,8 +155,8 @@ router.delete(
         if (params.id !== undefined) {
             params.id = +params.id;
         }
-        if(isNaN(params.id)){
-            throw new BadRequestError("id must be an integer")
+        if (isNaN(params.id)) {
+            throw new BadRequestError("id must be an integer");
         }
         await Job.remove(params.id);
         return res.json({ deleted: params.id });

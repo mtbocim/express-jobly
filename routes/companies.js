@@ -53,6 +53,7 @@ router.post("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   const query = req.query;
+
   if (query.minEmployees !== undefined) {
     query.minEmployees = +query.minEmployees;
   }
@@ -109,7 +110,7 @@ router.patch(
   ensureLoggedIn,
   ensureAdmin,
   async function (req, res, next) {
-    
+
     const validator = jsonschema.validate(
       req.body,
       companyUpdateSchema,

@@ -113,7 +113,7 @@ describe("GET /jobs", function () {
                     {
                         "id": expect.any(Number),
                         "title": "j1",
-                        "salary": 1000,
+                        "salary": 5000,
                         "equity": "0",
                         "companyHandle": "c1",
                     },
@@ -137,7 +137,7 @@ describe("GET /jobs", function () {
                         {
                             "id": expect.any(Number),
                             "title": "j1",
-                            "salary": 1000,
+                            "salary": 5000,
                             "equity": "0",
                             "companyHandle": "c1",
                         }
@@ -195,7 +195,7 @@ describe("GET /jobs", function () {
         // there's no normal failure event which will cause this route to fail ---
         // thus making it hard to test that the error-handler works with it. This
         // should cause an error, all right :)
-        await db.query("DROP TABLE jobs");
+        await db.query("DROP TABLE jobs CASCADE");
         const resp = await request(app)
             .get("/jobs")
             .set("authorization", `Bearer ${u1Token}`);
