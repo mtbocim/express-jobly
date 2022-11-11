@@ -89,8 +89,6 @@ class Company {
     }
 
     const { where, values } = Company._sqlForFilteredSearch(queryParams);
-    //console.log(">>>>>>>WHERE", where);
-    //console.log(">>>>>>>VALUES", values);
 
     const query =
       `SELECT

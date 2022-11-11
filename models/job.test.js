@@ -5,10 +5,10 @@ const { BadRequestError, NotFoundError } = require("../expressError");
 const Company = require("./company.js");
 const Job = require("./job.js");
 const {
-    commonBeforeAll,
-    commonBeforeEach,
-    commonAfterEach,
-    commonAfterAll,
+  commonBeforeAll,
+  commonBeforeEach,
+  commonAfterEach,
+  commonAfterAll,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -25,140 +25,140 @@ afterAll(commonAfterAll);
 //duplicate and get different id
 
 describe("create", function () {
-    const newJob = {
+  const newJob = {
+    title: "new",
+    salary: 1000,
+    equity: .1,
+    handle: "c1"
+  };
+
+  test("works", async function () {
+
+    const job = await Job.create(newJob);
+    // expect(job).toEqual(newJob);
+
+    const result = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+            FROM jobs
+            WHERE title = 'new'`);
+
+    expect(result.rows).toEqual([
+      {
+        id: expect.any(Number),
         title: "new",
         salary: 1000,
-        equity: .1,
-        handle: "c1"
+        equity: "0.1",
+        companyHandle: "c1"
+      }
+    ]);
+  });
+
+  test("works with duplicate job info", async function () {
+
+    const job = await Job.create(newJob);
+    const job2 = await Job.create(newJob);
+
+    // expect(job).toEqual(newJob);
+    // expect(job2).toEqual(newJob);
+
+    const result = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+            FROM jobs
+            WHERE title = 'new'`);
+
+    expect(result.rows).toEqual([
+      {
+        id: expect.any(Number),
+        title: "new",
+        salary: 1000,
+        equity: "0.1",
+        companyHandle: "c1"
+      },
+      {
+        id: expect.any(Number),
+        title: "new",
+        salary: 1000,
+        equity: "0.1",
+        companyHandle: "c1"
+      }
+    ]);
+  });
+
+  test("bad request: missing title", async function () {
+    const badJob = {
+      salary: 1000,
+      equity: .1,
+      handle: "c1"
     };
 
-    test("works", async function () {
+    try {
+      const job = await Job.create(badJob);
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
 
-        const job = await Job.create(newJob);
-        // expect(job).toEqual(newJob);
 
-        const result = await db.query(
-            `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+  });
+
+  test("bad request: missing handle", async function () {
+    const badJob = {
+      title: "new",
+      salary: 1000,
+      equity: .1
+    };
+
+    try {
+      const job = await Job.create(badJob);
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+
+  });
+
+
+  test("works: missing salary & equity", async function () {
+    const newJob2 = {
+      title: "new",
+      handle: "c1"
+    };
+
+
+    const job = await Job.create(newJob2);
+    // expect(job).toEqual(newJob);
+
+    const result = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
             FROM jobs
             WHERE title = 'new'`);
 
-        expect(result.rows).toEqual([
-            {
-                id: expect.any(Number),
-                title: "new",
-                salary: 1000,
-                equity: "0.1",
-                companyHandle: "c1"
-            }
-        ]);
-    });
+    expect(result.rows).toEqual([
+      {
+        id: expect.any(Number),
+        title: "new",
+        salary: null,
+        equity: null,
+        companyHandle: "c1"
+      }
+    ]);
 
-    test("works with duplicate job info", async function () {
+  });
 
-        const job = await Job.create(newJob);
-        const job2 = await Job.create(newJob);
+  test("works: missing salary & equity", async function () {
+    const newJob2 = {
+      title: "new",
+      handle: "not-real"
+    };
 
-        // expect(job).toEqual(newJob);
-        // expect(job2).toEqual(newJob);
+    try {
+      const job = await Job.create(newJob2);
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
 
-        const result = await db.query(
-            `SELECT id, title, salary, equity, company_handle AS "companyHandle"
-            FROM jobs
-            WHERE title = 'new'`);
-
-        expect(result.rows).toEqual([
-            {
-                id: expect.any(Number),
-                title: "new",
-                salary: 1000,
-                equity: "0.1",
-                companyHandle: "c1"
-            },
-            {
-                id: expect.any(Number),
-                title: "new",
-                salary: 1000,
-                equity: "0.1",
-                companyHandle: "c1"
-            }
-        ]);
-    });
-
-    test("bad request: missing title", async function () {
-        const badJob = {
-            salary: 1000,
-            equity: .1,
-            handle: "c1"
-        };
-
-        try {
-            const job = await Job.create(badJob);
-            throw new Error("fail test, you shouldn't get here");
-        } catch (err) {
-            expect(err instanceof BadRequestError).toBeTruthy();
-        }
-
-
-    });
-
-    test("bad request: missing handle", async function () {
-        const badJob = {
-            title: "new",
-            salary: 1000,
-            equity: .1
-        };
-
-        try {
-            const job = await Job.create(badJob);
-            throw new Error("fail test, you shouldn't get here");
-        } catch (err) {
-            expect(err instanceof BadRequestError).toBeTruthy();
-        }
-
-    });
-
-
-    test("works: missing salary & equity", async function () {
-        const newJob2 = {
-            title: "new",
-            handle: "c1"
-        };
-
-
-        const job = await Job.create(newJob2);
-        // expect(job).toEqual(newJob);
-
-        const result = await db.query(
-            `SELECT id, title, salary, equity, company_handle AS "companyHandle"
-            FROM jobs
-            WHERE title = 'new'`);
-
-        expect(result.rows).toEqual([
-            {
-                id: expect.any(Number),
-                title: "new",
-                salary: null,
-                equity: null,
-                companyHandle: "c1"
-            }
-        ]);
-
-    });
-
-    test("works: missing salary & equity", async function () {
-        const newJob2 = {
-            title: "new",
-            handle: "not-real"
-        };
-
-        try {
-            const job = await Job.create(newJob2);
-            throw new Error("fail test, you shouldn't get here");
-        } catch (err) {
-            expect(err instanceof BadRequestError).toBeTruthy();
-        }
-
-    });
+  });
 
 });
 
@@ -176,35 +176,122 @@ describe("create", function () {
 
 //find all with no filter
 describe("find all", function () {
-    test("works: returns *all* job listings", async function () {
-        const jobs = await Job.findAll();
-        expect(jobs).toEqual([
-            {
-                "companyHandle": "c1",
-                "equity": "0",
-                "id": expect.any(Number),
-                "salary": 1000,
-                "title": "j1",
-            },
-            {
-                "companyHandle": "c2",
-                "equity": "0.5",
-                "id": expect.any(Number),
-                "salary": 1000000,
-                "title": "j2",
-            }
-        ]);
-    });
+  test("works: returns *all* job listings", async function () {
+    const jobs = await Job.findAll();
+    expect(jobs).toEqual([
+      {
+        "id": expect.any(Number),
+        "title": "j1",
+        "salary": 1000,
+        "equity": "0",
+        "companyHandle": "c1",
+      },
+      {
+        "id": expect.any(Number),
+        "title": "j2",
+        "salary": 1000000,
+        "equity": "0.5",
+        "companyHandle": "c2",
+      }
+    ]);
+  });
 });
 
 
 /************************************** findFiltered */
 
 //find with 1 filter
-//find with 2 filters
-//find with all filters
-//fail if bad params
-//works if none returned
+describe("findFiltered", function () {
+
+  test("works: finds filtered set of jobs (1 filter)", async function () {
+    let jobs = await Job.findFiltered({ title: "j" });
+    expect(jobs).toEqual([
+      {
+        "id": expect.any(Number),
+        "title": "j1",
+        "salary": 1000,
+        "equity": "0",
+        "companyHandle": "c1",
+      },
+      {
+        "id": expect.any(Number),
+        "title": "j2",
+        "salary": 1000000,
+        "equity": "0.5",
+        "companyHandle": "c2",
+      }
+    ]);
+  });
+
+  test("works: finds filtered set of jobs (1 filter)", async function () {
+    let jobs = await Job.findFiltered({ title: "j1" });
+    expect(jobs).toEqual([
+      {
+        "id": expect.any(Number),
+        "title": "j1",
+        "salary": 1000,
+        "equity": "0",
+        "companyHandle": "c1",
+      },
+    ]);
+  });
+
+  //find with 2 filters
+  test("works: finds filtered set of jobs (2 filters)", async function () {
+    let jobs = await Job.findFiltered({ title: "j", minSalary: 50000 });
+    expect(jobs).toEqual([
+      {
+        "companyHandle": "c2",
+        "equity": "0.5",
+        "id": expect.any(Number),
+        "salary": 1000000,
+        "title": "j2",
+      }
+    ]);
+  });
+
+  //find with all filters
+  test("works: finds filtered set of jobs (3 filters)", async function () {
+    let jobs = await Job.findFiltered({ title: "j", minSalary: 50000, hasEquity: true });
+    expect(jobs).toEqual([
+      {
+        "id": expect.any(Number),
+        "title": "j2",
+        "salary": 1000000,
+        "equity": "0.5",
+        "companyHandle": "c2",
+      }
+    ]);
+  });
+
+  test("works: finds filtered set of jobs (3 filters)", async function () {
+    let jobs = await Job.findFiltered({ title: "j", minSalary: 50000, hasEquity: false });
+    expect(jobs).toEqual([
+      {
+        "id": expect.any(Number),
+        "title": "j2",
+        "salary": 1000000,
+        "equity": "0.5",
+        "companyHandle": "c2",
+      }
+    ]);
+  });
+
+  test("fail: bad search param passed", async function () {
+    try {
+      await Job.findFiltered({ cheese: "cheddar" });
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+  test("works: finds none", async function () {
+    const jobs = await Job.findFiltered({ title: "asdfasdfasdf" });
+    expect(jobs).toEqual([]);
+  });
+
+});
 
 /************************************** get (single) */
 
@@ -231,95 +318,95 @@ describe("find all", function () {
 //fails for given id
 
 /************************************** sqlFilteredSearch */
-describe("tests for jobs/sqlFilteredSearch", function(){
-    //works for one param
-    test("works: single valid input", function(){
-        const data = {hasEquity: true};
+describe("tests for jobs/sqlFilteredSearch", function () {
+  //works for one param
+  test("works: single valid input", function () {
+    const data = { hasEquity: true };
 
-        const queryData = Job._sqlForFilteredSearch(data);
-        expect(queryData).toEqual(
-            {
-                "values": [],
-                "where": "equity > 0"
-            }
-        );
-    });
-    
-    //works for two params
-    test("works: two valid input", function(){
-        const data = {minSalary: 50000, hasEquity: true};
+    const queryData = Job._sqlForFilteredSearch(data);
+    expect(queryData).toEqual(
+      {
+        "values": [],
+        "where": "equity > 0"
+      }
+    );
+  });
 
-        const queryData = Job._sqlForFilteredSearch(data);
-        expect(queryData).toEqual(
-            {
-                "values": [50000],
-                "where": "salary >= $1 AND equity > 0"
-            }
-        );
-    });
-    //works for three params
-    test("works: all valid input", function(){
-        const data = {title:"title", minSalary: 50000, hasEquity: true};
+  //works for two params
+  test("works: two valid input", function () {
+    const data = { minSalary: 50000, hasEquity: true };
 
-        const queryData = Job._sqlForFilteredSearch(data);
-        expect(queryData).toEqual(
-            {
-                "values": ['%title%', 50000],
-                "where": "title ILIKE $1 AND salary >= $2 AND equity > 0"
-            }
-        );
-    });
+    const queryData = Job._sqlForFilteredSearch(data);
+    expect(queryData).toEqual(
+      {
+        "values": [50000],
+        "where": "salary >= $1 AND equity > 0"
+      }
+    );
+  });
+  //works for three params
+  test("works: all valid input", function () {
+    const data = { title: "title", minSalary: 50000, hasEquity: true };
 
-    test("works: all valid input", function(){
-        const data = {title:"title", minSalary: 50000, hasEquity: false};
+    const queryData = Job._sqlForFilteredSearch(data);
+    expect(queryData).toEqual(
+      {
+        "values": ['%title%', 50000],
+        "where": "title ILIKE $1 AND salary >= $2 AND equity > 0"
+      }
+    );
+  });
 
-        const queryData = Job._sqlForFilteredSearch(data);
-        expect(queryData).toEqual(
-            {
-                "values": ['%title%', 50000],
-                "where": "title ILIKE $1 AND salary >= $2"
-            }
-        );
-    });
+  test("works: all valid input", function () {
+    const data = { title: "title", minSalary: 50000, hasEquity: false };
 
-    //fails for no keys
-    test("bad request: no data passed", function(){
-        const data = {};
+    const queryData = Job._sqlForFilteredSearch(data);
+    expect(queryData).toEqual(
+      {
+        "values": ['%title%', 50000],
+        "where": "title ILIKE $1 AND salary >= $2"
+      }
+    );
+  });
 
-        try{
-        const queryData = Job._sqlForFilteredSearch(data);
-        throw new Error("shouldn't ever get here");
-        }catch(err){
-            expect(err instanceof BadRequestError).toBeTruthy();
-        }  
-    });
+  //fails for no keys
+  test("bad request: no data passed", function () {
+    const data = {};
 
-    //fails for incorrect keys
-    test("bad request: incorrects keys provided for dataToFilter", function () {
-        const data = { monkey: "silly" };
-    
-        try {
-          const queryData = Job._sqlForFilteredSearch(data);
-          throw new Error("shouldn't ever get here");
-        }
-        catch (errs) {
-          expect(errs instanceof BadRequestError).toBeTruthy();
-        }
-      });
+    try {
+      const queryData = Job._sqlForFilteredSearch(data);
+      throw new Error("shouldn't ever get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
 
-    //fails for keys with no values
-    test("bad request: no values provided to keys for dataToFilter", function () {
-        const data = { name: "" };
-    
-        try {
-          const queryData = Job._sqlForFilteredSearch(data);
-    
-          throw new Error("shouldn't ever get here");
-        }
-        catch (errs) {
-        
-          expect(errs instanceof BadRequestError).toBeTruthy();
-        }
-      });
-    
+  //fails for incorrect keys
+  test("bad request: incorrects keys provided for dataToFilter", function () {
+    const data = { monkey: "silly" };
+
+    try {
+      const queryData = Job._sqlForFilteredSearch(data);
+      throw new Error("shouldn't ever get here");
+    }
+    catch (errs) {
+      expect(errs instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
+  //fails for keys with no values
+  test("bad request: no values provided to keys for dataToFilter", function () {
+    const data = { name: "" };
+
+    try {
+      const queryData = Job._sqlForFilteredSearch(data);
+
+      throw new Error("shouldn't ever get here");
+    }
+    catch (errs) {
+
+      expect(errs instanceof BadRequestError).toBeTruthy();
+    }
+  });
+
 });

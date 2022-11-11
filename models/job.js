@@ -98,6 +98,21 @@ class Job {
      */
 
     static async findFiltered(queryParams) {
+        const { where, values } = Job._sqlForFilteredSearch(queryParams);
+
+        const query =
+            `SELECT id,
+                    title,
+                    salary,
+                    equity,
+                    company_handle AS "companyHandle"
+            FROM jobs
+            WHERE ${where}
+            ORDER BY company_handle` ;
+
+        const jobsRes = await db.query(query, values);
+
+        return jobsRes.rows;
 
     }
 
@@ -181,7 +196,7 @@ class Job {
             where.push(`salary >= $${values.length}`);
         }
         if (dataToFilter.hasEquity === true) {
-            where.push(`equity > 0`)
+            where.push(`equity > 0`);
         }
 
         return ({ where: where.join(' AND '), values });
