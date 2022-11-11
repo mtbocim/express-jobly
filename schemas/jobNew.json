@@ -3,28 +3,28 @@
     "$id": "http://our.company.com/jobNew.schema.json",
     "type": "object",
     "properties": {
-        "title":{
-            "type":"string",
-            "minLength":1
+        "title": {
+            "type": "string",
+            "minLength": 1
         },
-        "salary":{
-            "type":"integer",
+        "salary": {
+            "type": "integer",
             "minimum": 0
         },
-        "equity":{
-            "type":"number",
-            "maximum": 0
+        "equity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1.0
         },
-        "handle":{
-            "type":"string",
+        "handle": {
+            "type": "string",
             "minLength": 1,
             "maxLength": 10
         }
     },
     "additionalProperties": false,
-    "required":[
+    "required": [
         "title",
         "handle"
     ]
 }
-      

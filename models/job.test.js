@@ -5,16 +5,17 @@ const { BadRequestError, NotFoundError } = require("../expressError");
 const Company = require("./company.js");
 const Job = require("./job.js");
 const {
-    commonBeforeAll,
-    commonBeforeEach,
-    commonAfterEach,
-    commonAfterAll,
-  } = require("./_testCommon");
-  
-  beforeAll(commonBeforeAll);
-  beforeEach(commonBeforeEach);
-  afterEach(commonAfterEach);
-  afterAll(commonAfterAll);
+  commonBeforeAll,
+  commonBeforeEach,
+  commonAfterEach,
+  commonAfterAll,
+} = require("./_testCommon");
+
+beforeAll(commonBeforeAll);
+beforeEach(commonBeforeEach);
+afterEach(commonAfterEach);
+afterAll(commonAfterAll);
+
 
 /************************************** create */
 
@@ -22,6 +23,138 @@ const {
 
 //create single
 //duplicate and get different id
+
+describe("create", function () {
+  const newJob = {
+    title: "new",
+    salary: 1000,
+    equity: .1,
+    handle: "c1"
+  };
+
+  test("works", async function () {
+
+    const job = await Job.create(newJob);
+    // expect(job).toEqual(newJob);
+
+    const result = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+            FROM jobs
+            WHERE title = 'new'`);
+
+    expect(result.rows).toEqual([
+      {
+        id: expect.any(Number),
+        title: "new",
+        salary: 1000,
+        equity: "0.1",
+        companyHandle: "c1"
+      }
+    ]);
+  });
+
+  test("works with duplicate job info", async function () {
+
+    const job = await Job.create(newJob);
+    const job2 = await Job.create(newJob);
+
+    // expect(job).toEqual(newJob);
+    // expect(job2).toEqual(newJob);
+
+    const result = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+            FROM jobs
+            WHERE title = 'new'`);
+
+    expect(result.rows).toEqual([
+      {
+        id: expect.any(Number),
+        title: "new",
+        salary: 1000,
+        equity: "0.1",
+        companyHandle: "c1"
+      },
+      {
+        id: expect.any(Number),
+        title: "new",
+        salary: 1000,
+        equity: "0.1",
+        companyHandle: "c1"
+      }
+    ]);
+  });
+
+  test("bad request: missing title", async function () {
+    const badJob = {
+      salary: 1000,
+      equity: .1,
+      handle: "c1"
+    };
+
+    try {
+      const job = await Job.create(badJob);
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+
+
+  });
+
+  test("bad request: missing handle", async function () {
+    const badJob = {
+      title: "new",
+      salary: 1000,
+      equity: .1
+    };
+
+    try {
+      const job = await Job.create(badJob);
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+
+  });
+
+
+  test("works: missing salary & equity", async function () {
+    const newJob2 = {
+      title: "new",
+      handle: "c1"
+    };
+
+
+    const job = await Job.create(newJob2);
+    // expect(job).toEqual(newJob);
+
+    const result = await db.query(
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
+            FROM jobs
+            WHERE title = 'new'`);
+
+    expect(result.rows).toEqual([
+      {
+        id: expect.any(Number),
+        title: "new",
+        salary: null,
+        equity: null,
+        companyHandle: "c1"
+      }
+    ]);
+
+  });
+
+});
+
+
+
+
+
+
+
+
+
 
 
 /************************************** findAll */

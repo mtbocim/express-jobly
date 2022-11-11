@@ -37,7 +37,7 @@ async function commonBeforeAll() {
                          equity,
                          company_handle)
         VALUES ('j1', 1000, 0, 'c1'),
-               ('j2', 1000000, 1, 'c2')`);
+               ('j2', 1000000, .5, 'c2')`);
 }
 
 async function commonBeforeEach() {

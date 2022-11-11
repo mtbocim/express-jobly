@@ -9,22 +9,65 @@ const jobNewSchema = require("../schemas/jobNew.json");
 
 class Job {
     /** Create a job (from data), update db, return new job data.
-     * 
+     *
      * data should be {title, salary, equity, handle}
-     * 
+     *
      * Returns {id, title, salary, equity, handle}
-     * 
-     * Throws BadRequestError if company_handle doesn't exist
+     *
+     * Throws BadRequestError title empty, salary < 0, equity > 1.0.
+     * Throws BadRequestError company handle not in database.
      * (violates foreign key reference)
+     *
      */
 
     static async create({ title, salary, equity, handle }) {
+        console.log("HANDLE>>>>>>>>>>>>>>>>>>", handle);
+        const validator = jsonschema.validate(
+            { title, salary, equity, handle },
+            jobNewSchema,
+            { required: true }
+        );
+        if (!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
+
+        const companyCheck = await db.query(
+            `SELECT handle
+                FROM companies
+                WHERE handle = $1`,
+            [handle]);
+
+        console.log("companyCheck>>>>>>>>>>>>>>>>>>", companyCheck);
+        if (!companyCheck.rows[0]) {
+            throw new BadRequestError(`Invalid company: ${handle}`);
+        }
+
+
+        const result = await db.query(`
+            INSERT INTO jobs(title,
+                            salary,
+                            equity,
+                            company_handle)
+            VALUES ($1, $2, $3, $4)
+            RETURNING   id,
+                        title,
+                        salary,
+                        equity,
+                        company_handle AS "companyHandle"
+        `, [title,
+            salary,
+            equity,
+            handle]);
+
+        const job = result.rows[0];
+        return job;
 
     }
 
     /**
      * Find all jobs.
-     * 
+     *
      * Returns [{id, title, salary, equity, handle}, ...]
      */
     static async findAll() {
@@ -33,15 +76,15 @@ class Job {
 
     /**
      * Find jobs by filter
-     * 
+     *
      * Accepts an object containing search values.
      * Valid filter keywords:
      *  -title (partial or full)(case insensitive)
      *  -minSalary (integer)
      *  -hasEquity (T/F)
      * {title:"programmer", minSalary:"1000000", hasEquity:true}
-     * 
-     * 
+     *
+     *
      * Returns [{id, title, salary, equity, handle}, ...]
      */
 
@@ -51,9 +94,9 @@ class Job {
 
     /**
      * Given a job ID, return data about the job.
-     * 
+     *
      * Returns {id, title, salary, equity, handle}
-     * 
+     *
      * Throws NotFoundError if not found.
      */
 
@@ -63,7 +106,7 @@ class Job {
 
     /**
     * Update job data with 'data'.
-    * 
+    *
     * This is a "partial update" --- it's fine if data doesn't contain all the
     * fields; this only changes provided ones.
     *
@@ -74,17 +117,17 @@ class Job {
     * Throws NotFoundError if not found.
     */
 
-    static async update(id, data){
+    static async update(id, data) {
 
     }
 
     /**
      * Delete given job from the DB, returns undefined.
-     * 
+     *
      * Throws NotFoundError if company not found.
      */
 
-    static async remove(id){
+    static async remove(id) {
 
     }
 
@@ -94,17 +137,17 @@ class Job {
      * title: type(string)
      * minSalary: type(integer)
      * hasEquity: type(boolean)
-     * 
+     *
      * Accepts:
      *  {title:"programmer", minSalary:"1000000", hasEquity:true}
-     * 
+     *
      * Returns:
      *  TBD
-     * 
+     *
      */
 
-    static _sqlForFilteredSearch(dataToFilter){
-        
+    static _sqlForFilteredSearch(dataToFilter) {
+
     }
 }
 

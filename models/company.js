@@ -16,7 +16,7 @@ class Company {
    * Returns { handle, name, description, numEmployees, logoUrl }
    *
    * Throws BadRequestError if company already in database.
-   * */
+   * */ //TODO: ADD TEST FOR NON-NULL NAME, NON-NULL EMPLOYEES
 
   static async create({ handle, name, description, numEmployees, logoUrl }) {
     const duplicateCheck = await db.query(
@@ -25,8 +25,9 @@ class Company {
            WHERE handle = $1`,
       [handle]);
 
-    if (duplicateCheck.rows[0])
+    if (duplicateCheck.rows[0]) {
       throw new BadRequestError(`Duplicate company: ${handle}`);
+    }
 
     const result = await db.query(
       `INSERT INTO companies(
@@ -76,7 +77,7 @@ class Company {
    *  -maxEmployees
    *  -name
    * { name: 'name', minEmployees: 1, maxEmployees: 1000 }
-   * 
+   *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    */
 
