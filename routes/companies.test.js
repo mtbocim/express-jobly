@@ -47,7 +47,7 @@ describe("POST /companies", function () {
       .send(newCompany)
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(401);
-  
+
   });
 
   test("bad request with missing data for admin", async function () {
@@ -326,7 +326,7 @@ describe("PATCH /companies/:handle", function () {
         handle: "c1-new",
       })
       .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.statusCode).toEqual(401); //TODO: 401
+    expect(resp.statusCode).toEqual(401);
   });
 
   test("bad request on handle change attempt for admin", async function () {
@@ -394,5 +394,4 @@ describe("DELETE /companies/:handle", function () {
     expect(resp.statusCode).toEqual(404);
   });
 
-  //TODO: repeat above for non-admin
 });
