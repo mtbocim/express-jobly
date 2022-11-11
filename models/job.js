@@ -12,9 +12,9 @@ const jobFilterSearchSchema = require("../schemas/jobFilterSearch.json");
 class Job {
     /** Create a job (from data), update db, return new job data.
      *
-     * data should be {title, salary, equity, handle}
+     * data should be {title, salary, equity, companyHandle}
      *
-     * Returns {id, title, salary, equity, handle}
+     * Returns {id, title, salary, equity, companyHandle}
      *
      * Throws BadRequestError title empty, salary < 0, equity > 1.0.
      * Throws BadRequestError company handle not in database.
@@ -22,9 +22,9 @@ class Job {
      *
      */
 
-    static async create({ title, salary, equity, handle }) {
+    static async create({ title, salary, equity, companyHandle }) {
         const validator = jsonschema.validate(
-            { title, salary, equity, handle },
+            { title, salary, equity, companyHandle },
             jobNewSchema,
             { required: true }
         );
@@ -37,11 +37,11 @@ class Job {
             `SELECT handle
                 FROM companies
                 WHERE handle = $1`,
-            [handle]);
+            [companyHandle]);
 
         console.log("companyCheck>>>>>>>>>>>>>>>>>>", companyCheck);
         if (!companyCheck.rows[0]) {
-            throw new BadRequestError(`Invalid company: ${handle}`);
+            throw new BadRequestError(`Invalid company: ${companyHandle}`);
         }
 
 
@@ -59,7 +59,7 @@ class Job {
         `, [title,
             salary,
             equity,
-            handle]);
+            companyHandle]);
 
         const job = result.rows[0];
         return job;
@@ -198,7 +198,15 @@ class Job {
      */
 
     static async remove(id) {
+        const result = await db.query(
+            `DELETE
+                 FROM jobs
+                 WHERE id = $1
+                 RETURNING id`,
+            [id]);
+        const job = result.rows[0];
 
+        if (!job) throw new NotFoundError(`No company: ${id}`);
     }
 
     /**

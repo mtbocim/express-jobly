@@ -15,16 +15,7 @@
             "type": "number",
             "minimum": 0,
             "maximum": 1.0
-        },
-        "companyHandle": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10
         }
     },
-    "additionalProperties": false,
-    "required": [
-        "title",
-        "companyHandle"
-    ]
+    "additionalProperties": false
 }

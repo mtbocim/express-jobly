@@ -29,7 +29,7 @@ describe("create", function () {
     title: "new",
     salary: 1000,
     equity: .1,
-    handle: "c1"
+    companyHandle: "c1"
   };
 
   test("works", async function () {
@@ -88,7 +88,7 @@ describe("create", function () {
     const badJob = {
       salary: 1000,
       equity: .1,
-      handle: "c1"
+      companyHandle: "c1"
     };
 
     try {
@@ -121,7 +121,7 @@ describe("create", function () {
   test("works: missing salary & equity", async function () {
     const newJob2 = {
       title: "new",
-      handle: "c1"
+      companyHandle: "c1"
     };
 
 
@@ -148,7 +148,7 @@ describe("create", function () {
   test("works: missing salary & equity", async function () {
     const newJob2 = {
       title: "new",
-      handle: "not-real"
+      companyHandle: "not-real"
     };
 
     try {
@@ -458,6 +458,23 @@ describe("update", function () {
 
 //works for given id
 //fails for given id
+describe("remove", function () {
+    test("works", async function () {
+      await Job.remove(1);
+      const res = await db.query(
+        "SELECT id FROM jobs WHERE id=1");
+      expect(res.rows.length).toEqual(0);
+    });
+  
+    test("not found if no such company", async function () {
+      try {
+        await Job.remove(9001);
+        throw new Error("fail test, you shouldn't get here");
+      } catch (err) {
+        expect(err instanceof NotFoundError).toBeTruthy();
+      }
+    });
+  });
 
 /************************************** sqlFilteredSearch */
 describe("tests for jobs/sqlFilteredSearch", function () {
