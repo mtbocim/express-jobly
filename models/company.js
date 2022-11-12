@@ -138,12 +138,8 @@ class Company {
         FROM jobs
         WHERE company_handle = $1`, [handle]);
 
-
-
-
     const jobs = jobsRes.rows;
     company.jobs = jobs;
-
 
     return company;
   }

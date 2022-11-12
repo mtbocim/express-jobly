@@ -8,13 +8,14 @@
             "minLength": 1
         },
         "salary": {
-            "type": "integer",
+            "type": ["integer","null"],
             "minimum": 0
         },
         "equity": {
-            "type": "number",
+            "type": ["number","null"],
             "minimum": 0,
             "maximum": 1.0
+        
         }
     },
     "additionalProperties": false

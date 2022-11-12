@@ -5,6 +5,7 @@ const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 const jsonschema = require("jsonschema");
 const jobNewSchema = require("../schemas/jobNew.json");
+const jobUpdateSchema = require("../schemas/jobUpdate.json");
 const jobFilterSearchSchema = require("../schemas/jobFilterSearch.json");
 
 /**Related functions for jobs */
@@ -126,7 +127,7 @@ class Job {
 
     static async get(id) {
         if (typeof (id) !== 'number') {
-            throw new BadRequestError(`No job: ${id}`);
+            throw new BadRequestError(`No job: ${id}`); //update msg
         };
 
         const jobRes = await db.query(
@@ -145,10 +146,6 @@ class Job {
         if (!job) throw new NotFoundError(`No job: ${id}`);
 
         return job;
-
-
-
-
 
     }
 
@@ -171,6 +168,16 @@ class Job {
             throw new BadRequestError("Title field cannot be null");
         }
 
+        const validator = jsonschema.validate(
+            data,
+            jobUpdateSchema,
+            { required: true }
+        );
+        if (!validator.valid) {
+            const errs = validator.errors.map(e => e.stack);
+            throw new BadRequestError(errs);
+        }
+        //columns to update are already sql friendly
         const { setCols, values } = sqlForPartialUpdate(
             data, {});
 
@@ -206,7 +213,7 @@ class Job {
             [id]);
         const job = result.rows[0];
 
-        if (!job) throw new NotFoundError(`No company: ${id}`);
+        if (!job) throw new NotFoundError(`No job: ${id}`);
     }
 
     /**

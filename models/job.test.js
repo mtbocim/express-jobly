@@ -145,7 +145,7 @@ describe("create", function () {
 
   });
 
-  test("works: missing salary & equity", async function () {
+  test("works: handle not in the DB", async function () {
     const newJob2 = {
       title: "new",
       companyHandle: "not-real"
@@ -157,9 +157,8 @@ describe("create", function () {
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
-
+    //check for specific error message
   });
-
 });
 
 
@@ -365,7 +364,7 @@ describe("update", function () {
 
   test("works with one field: equity", async function () {
     const updateData = {
-      equity: "0.5"
+      equity: 0.5
     };
     const job = await Job.update(1, updateData);
     expect(job).toEqual({
@@ -381,7 +380,7 @@ describe("update", function () {
     const updateData = {
       title: "New",
       salary: 5000,
-      equity: "0.5"
+      equity: 0.5
     };
 
     const job = await Job.update(1, updateData);
@@ -432,7 +431,7 @@ describe("update", function () {
     const updateData = {
       title: "New",
       salary: 5000,
-      equity: "0.5"
+      equity: 0.5
     };
     try {
       await Job.update(100, updateData);
@@ -451,7 +450,15 @@ describe("update", function () {
     }
   });
 
-
+  test("bad request with invalid key", async function () {
+    try {
+      await Job.update(1, {winners: "yes"});
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
+  //TODO: test update a field that doesn't exist
 });
 
 /************************************** remove */
@@ -555,7 +562,7 @@ describe("tests for jobs/sqlFilteredSearch", function () {
 
   //fails for keys with no values
   test("bad request: no values provided to keys for dataToFilter", function () {
-    const data = { name: "" };
+    const data = { title: "" };
 
     try {
       const queryData = Job._sqlForFilteredSearch(data);

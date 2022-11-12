@@ -246,22 +246,16 @@ describe("GET /companies/:handle", function () {
     });
   });
 
-  test("works for anon: company w/o jobs", async function () {
-    const resp = await request(app).get(`/companies/c2`);
+  test("works for anon: company without jobs", async function () {
+    const resp = await request(app).get(`/companies/c3`);
     expect(resp.body).toEqual({
       company: {
-        description: "Desc2",
-        handle: "c2",
-        jobs: [{
-          "companyHandle": "c2",
-          "equity": "0.5",
-          "id": 2,
-          "salary": 1000000,
-          "title": "j2",
-        }],
-        logoUrl: "http://c2.img",
-        name: "C2",
-        numEmployees: 2
+        description: "Desc3",
+        handle: "c3",
+        jobs: [],
+        logoUrl: "http://c3.img",
+        name: "C3",
+        numEmployees: 3
       },
     });
   });
