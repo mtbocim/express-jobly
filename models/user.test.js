@@ -234,5 +234,19 @@ describe("remove", function () {
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
     }
-  });
+  });  
+});
+
+/************************************** applyToJob */
+
+describe("apply to a job", function(){
+//check admin results, user results, anon results
+
+//valid username and jobId
+//valid username but invalid jobId
+//invalid username but valid jobId
+//both invalid
+//empty
+//duplicate
+
 });

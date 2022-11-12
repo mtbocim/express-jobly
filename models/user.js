@@ -95,7 +95,7 @@ class User {
 
     return user;
   }
-
+  //TODO: show jobs appied for
   /** Find all users.
    *
    * Returns [{ username, first_name, last_name, email, is_admin }, ...]
@@ -114,7 +114,7 @@ class User {
 
     return result.rows;
   }
-
+  //TODO: show jobs applied for
   /** Given a username, return data about user.
    *
    * Returns { username, first_name, last_name, is_admin, jobs }
@@ -204,6 +204,13 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
+
+  /**Static method to allow a user (username) to apply for a job (jobId)*/
+
+  static async applyToJob(username, jobId) {
+
+  }
+
 }
 
 

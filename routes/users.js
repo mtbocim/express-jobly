@@ -14,6 +14,16 @@ const userUpdateSchema = require("../schemas/userUpdate.json");
 
 const router = express.Router();
 
+/** POST /users/:username/jobs/:id { username,jobId }  => { applied: jobId }
+ *
+ * Applies to a job for a user
+ *
+ * Authorization required: login
+ **/
+
+router.post("/:username/jobs/:id", ensureLoggedIn, async function (req,res,next){
+  //TODO
+});
 
 /** POST / { user }  => { user, token }
  *
@@ -43,7 +53,7 @@ router.post("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   return res.status(201).json({ user, token });
 });
 
-
+//TODO: add jobs users have applies to
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of all users.
@@ -56,7 +66,7 @@ router.get("/", ensureLoggedIn, ensureAdmin, async function (req, res, next) {
   return res.json({ users });
 });
 
-
+//TODO: add jobs users have applied to
 /** GET /[username] => { user }
  *
  * Returns { username, firstName, lastName, isAdmin }
